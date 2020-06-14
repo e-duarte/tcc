@@ -139,3 +139,4 @@ Testes/
 predict_image.py
 Modelos\ usados\ para\ os\ testes
 *.hdf5
+.vscode/
