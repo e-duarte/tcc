@@ -127,3 +127,15 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#directores igonoreds
+artigos/
+implementações/
+learning/
+logs/
+keras_extensions-master.zip
+tutorials/
+Testes/
+predict_image.py
+Modelos\ usados\ para\ os\ testes
+*.hdf5
