@@ -25,7 +25,6 @@ class BaseModel:
 
 class Alexnet(BaseModel):
     def __init__(self, input_shape=(28,28,1), initializers=True):
-        # self.model = None
         normal = None
         one = None
         zero = None
@@ -40,18 +39,17 @@ class Alexnet(BaseModel):
             normal = keras.initializers.RandomNormal(mean=0.0, stddev=1e-2)
             one = keras.initializers.Ones()
             zero = keras.initializers.Zeros()
-            # one = None
 
         
 
         self.input_image = Input(shape=input_shape,
                             name="input_images")
         #layers
-        self.conv_1 = Conv2D(96, (5,5), name='1Conv',
+        self.conv_1 = Conv2D(96, (11,11), name='1Conv',
                             activation = activation,
                             kernel_initializer=normal,
                             bias_initializer=zero,
-                            strides=(2,2),
+                            strides=(4,4),
                             padding=pad)
         
         self.max_pooling_1 = MaxPooling2D(pool_size=kernel_pooling,
@@ -160,34 +158,41 @@ class Resnet34(BaseModel):
     def build(self):
         input = Input(shape=self.input_shape)
 
+        name = self.label.format(self.count)
         x = Conv2D(64,
                   (7,7),
                   strides=2,
                   padding='same',
-                  name= self.label.format(self.count),
+                  name=name,
                   kernel_initializer='he_normal',
                   kernel_regularizer=l2(1e-4))(input)
-        x = BatchNormalization()(x)
-        x = Activation('relu')(x)
 
+        name = "BN_{}".format(self.count)                  
+        x = BatchNormalization(name=name)(x)
+
+        name = "RELU_{}".format(self.count)
+        x = Activation('relu', name=name)(x)
+
+        name = "MXP_{}".format(self.count)
         x = MaxPooling2D((3,3),
                         strides=(2,2), 
                         padding='same',
-                        name='MaxPooling')(x)
+                        name=name)(x)
 
         downsample = False
         self.count += 1
         for stage in self.blocks:
             if downsample:
-                stride = 2 if stage == 6 else 1
+                stride = 2
                 x = self.downsample_block(self.num, x, stride)
                 stage -= 1
                 downsample = False
+            # else:
             x = self.identity_block(stage, self.num, x)
             self.num *= 2  
             downsample = True
 
-        x = AveragePooling2D(pool_size=2, name='AveragePooling')(x)
+        x = AveragePooling2D(pool_size=1, name='AVG')(x)
         x = Flatten()(x)
         x = Dense(10,
                  activation='softmax',
@@ -197,46 +202,59 @@ class Resnet34(BaseModel):
     
     def identity_block(self, numblocks, num_filters, x):
         for i in range(numblocks):
+            name = self.label.format(self.count)
             y = Conv2D(num_filters,
                       (3,3),
                       padding='same',
-                      name=self.label.format(self.count),
+                      name=name,
                       kernel_initializer='he_normal',
                       kernel_regularizer=l2(1e-4))(x)
-            x = BatchNormalization()(x)
-            x = Activation('relu')(x)
+            
+            name = "BN_{}".format(self.count)                  
+            y = BatchNormalization(name=name)(y)
+
+            name = "RELU_{}".format(self.count)
+            y = Activation('relu', name=name)(y)
 
             self.count +=1
 
+            name = self.label.format(self.count)
             y = Conv2D(num_filters,
                       (3,3),
                       padding='same',
                       activation='relu',
-                      name=self.label.format(self.count),
+                      name=name,
                       kernel_initializer='he_normal',
                       kernel_regularizer=l2(1e-4))(y)
-            x = BatchNormalization()(x)
-
-            self.count +=1
+                      
+            name = "BN_{}".format(self.count)                  
+            y = BatchNormalization(name=name)(y)
 
             z = keras.layers.add([x,y])
-            x = Activation('relu')(z)
+
+            name = "RELU_{}".format(self.count)
+            x = Activation('relu', name=name)(z)
+            self.count +=1
         return x
 
     def downsample_block(self, num_filters, x, stride):
+        name = self.label.format(self.count)
         y = Conv2D(num_filters,
                   (3,3),
                   padding='same',
                   activation='relu',
                   strides=stride,
-                  name=self.label.format(self.count),
+                  name=name,
                   kernel_initializer='he_normal',
                   kernel_regularizer=l2(1e-4))(x)
-        x = BatchNormalization()(x)
-        x = Activation('relu')(x)
+
+        name = "BN_{}".format(self.count)                  
+        y = BatchNormalization(name=name)(y)
+
+        name = "RELU_{}".format(self.count)
+        y = Activation('relu', name=name)(y)
 
         self.count +=1
-
         y = Conv2D(num_filters,
                   (3,3),
                   padding='same',
@@ -244,23 +262,24 @@ class Resnet34(BaseModel):
                   name=self.label.format(self.count),
                   kernel_initializer='he_normal',
                   kernel_regularizer=l2(1e-4))(y)
-        x = BatchNormalization()(x)
-
-        self.count +=1
+        
+        name = "BN_{}".format(self.count)                  
+        y = BatchNormalization(name=name)(y)
 
         down = Conv2D(num_filters,
                      (1,1),
                      padding='same',
+                     name='Down_{}'.format(self.count),
                      strides=stride,
                      kernel_initializer='he_normal',
                      kernel_regularizer=l2(1e-4))(x)
 
         z = keras.layers.add([down,y])
-        x = Activation('relu')(z)
+        name = "RELU_{}".format(self.count)
+        x = Activation('relu', name=name)(z)
+        
+        self.count +=1
         return x
-
-    # def __call__(self):
-    #     return self.model
 
 class DeepAutoencoder(BaseModel):
     def __init__(self, input_shape=(784,)):
@@ -320,8 +339,3 @@ class DeepAutoencoder(BaseModel):
     
     def __call__(self):
         return (self.model, self.encoder())
-
-# (autoencoder, encoder) = DeepAutoencoder()()
-# autoencoder.summary()
-# encoder.summary()
-
