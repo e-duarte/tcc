@@ -9,6 +9,7 @@ from tensorflow.keras.layers import MaxPooling2D,  AveragePooling2D
 class BaseModel:
     def __init__(self):
         self.model = None
+        self.weight_initial = None
 
     def build(self):
         print("__build__")
@@ -19,12 +20,16 @@ class BaseModel:
             loss=params['loss'],
             metrics=params['metrics']
         )
+        self.weight_initial = self.model.get_weights()
+    
+    def resetting_weight(self):
+        self.model.set_weights(self.weight_initial)
 
     def __call__(self):
         return self.model
 
 class Alexnet(BaseModel):
-    def __init__(self, input_shape=(28,28,1), initializers=True):
+    def __init__(self, input_shape=(28,28,1), initializers=True, name='model'):
         normal = None
         one = None
         zero = None
@@ -34,6 +39,7 @@ class Alexnet(BaseModel):
         activation = 'relu'
         one = None
         zero = None
+        self.name = name
         
         if initializers:
             normal = keras.initializers.RandomNormal(mean=0.0, stddev=1e-2)
@@ -137,20 +143,17 @@ class Alexnet(BaseModel):
         x = self.dense_2(x)
         x = Dropout(0.5, name='2Dropout')(x)
         output = self.dense_3(x)
-        self.model = Model(inputs=self.input_image, outputs=output)
+        self.model = Model(inputs=self.input_image, outputs=output, name=self.name)
         # return self.model
 
-    # def __call__(self):
-    #     return self.model
-
 class Resnet34(BaseModel):
-    def __init__(self, input_shape=(28,28,1)):
+    def __init__(self, input_shape=(28,28,1), name='model'):
         self.num = 64
         self.blocks = [3, 4, 6, 3] #Define a arquitetura da rede
         self.count = 1
         self.label = 'Conv_{}'
         self.input_shape = input_shape
-        
+        self.name = name
         # self.model = None
 
         self.build()
@@ -198,7 +201,7 @@ class Resnet34(BaseModel):
                  activation='softmax',
                  kernel_initializer='he_normal',
                  name='classifier')(x)
-        self.model = Model(inputs=input, outputs=x)
+        self.model = Model(inputs=input, outputs=x, name=self.name)
     
     def identity_block(self, numblocks, num_filters, x):
         for i in range(numblocks):
@@ -282,12 +285,13 @@ class Resnet34(BaseModel):
         return x
 
 class DeepAutoencoder(BaseModel):
-    def __init__(self, input_shape=(784,)):
+    def __init__(self, input_shape=(784,), name='model'):
         self.hidden_activation = 'relu'
         self.output_activation = 'sigmoid'
         self.architecture_encoder = [1000, 500, 250, 30]
         self.architecture_decoder = [250, 500, 1000, 784]
         self.input_shape = input_shape
+        self.name = name
 
         self.build()
 
@@ -318,7 +322,7 @@ class DeepAutoencoder(BaseModel):
                  activation=self.output_activation,
                  name='Output_Layer')(x)
 
-        self.model = Model(inputs=input, outputs=y, name='Autoencoder')
+        self.model = Model(inputs=input, outputs=y, name=self.name)
     
     def encoder(self):
         input = Input(shape=self.input_shape, name='Input_Layer')

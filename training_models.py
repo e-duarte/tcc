@@ -4,55 +4,39 @@ from tensorflow.keras.callbacks import TensorBoard
 import numpy as np
 
 class Trainner():
-    def __init__(self,model,
-        dataset,
-        checkpoint_name='model_save',
+    def __init__(self,
         epochs=10,
-        validation_data=None,
         batch_size=None,
         data_augmentation=None,
-        callbacks=[],
-        tensor_board=False):
+        callbacks=[]):
 
-        self.model = model
-        self.x = dataset[0]
-        self.y = dataset[1]
         self.epochs=epochs
 
-        self.validation_data=validation_data
         self.batch_size=batch_size
         self.data_augmantion=data_augmentation
         self.callbacks=callbacks
 
-        self.steps_per_epoch = int(len(self.x)/self.batch_size) if batch_size else None
-        save_freq = self.steps_per_epoch if batch_size else len(self.x)
+        # checkpoint = ModelCheckpoint(checkpoint_name + '.hdf5', monitor='loss', verbose=1,
+                                        # save_best_only=True, mode='auto', save_freq=save_freq)
+        # self.callbacks.append(checkpoint)
 
-        if tensor_board:
-            self.callbacks.append(TensorBoard(log_dir='./{}'.format(checkpoint_name), histogram_freq=1))
-
-        checkpoint = ModelCheckpoint(checkpoint_name + '.hdf5', monitor='loss', verbose=1,
-                                        save_best_only=True, mode='auto', save_freq=save_freq)
-        self.callbacks.append(checkpoint)
-
-    def train_model(self):
+    def train_model(self, x, y, model):
+        steps_per_epoch = int(len(x)/self.batch_size) if self.batch_size else None
+    
         history = None
         if self.data_augmantion:
-            history = self.model.fit(self.data_augmantion.flow(self.x, self.y, batch_size=self.batch_size),
+            history = model.fit(self.data_augmantion.flow(x, y, batch_size=self.batch_size),
                         epochs=self.epochs,
                         callbacks=self.callbacks,
                         # use_multiprocessing=True,
-                        steps_per_epoch=self.steps_per_epoch,
-                        validation_data=self.validation_data,)
+                        steps_per_epoch=steps_per_epoch)
         else:
-            history = self.model.fit(self.x,
-                        self.y,
+            history = model.fit(x,
+                        y,
                         epochs=self.epochs,
                         # callbacks=self.callbacks,
                         # use_multiprocessing=True,
                         batch_size=self.batch_size,
-                        steps_per_epoch=self.steps_per_epoch,
-                        validation_data=self.validation_data)
+                        steps_per_epoch=steps_per_epoch)
         return history
-
-
 
