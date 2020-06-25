@@ -30,19 +30,17 @@ class BaseModel:
 
 class Alexnet(BaseModel):
     def __init__(self, input_shape=(28,28,1), initializers=True, name='model'):
-        normal = None
+        initializer = None
         one = None
         zero = None
         kernel_pooling = (3,3)
         stride_pooling = (2,2)
         pad = 'same'
         activation = 'relu'
-        one = None
-        zero = None
         self.name = name
         
         if initializers:
-            normal = keras.initializers.RandomNormal(mean=0.0, stddev=1e-2)
+            initializer = keras.initializers.Randominitializer(mean=0.0, stddev=1e-2)
             one = keras.initializers.Ones()
             zero = keras.initializers.Zeros()
 
@@ -53,9 +51,9 @@ class Alexnet(BaseModel):
         #layers
         self.conv_1 = Conv2D(96, (11,11), name='1Conv',
                             activation = activation,
-                            kernel_initializer=normal,
+                            kernel_initializer=initializer,
                             bias_initializer=zero,
-                            strides=(4,4),
+                            # strides=(4,4),
                             padding=pad)
         
         self.max_pooling_1 = MaxPooling2D(pool_size=kernel_pooling,
@@ -65,9 +63,9 @@ class Alexnet(BaseModel):
 
         self.conv_2 = Conv2D(256, (5,5), name='2Conv',
                             activation = activation,
-                            kernel_initializer=normal,
+                            kernel_initializer=initializer,
                             bias_initializer=one,
-                            strides=(4,4),
+                            # strides=(4,4),
                             padding=pad)
 
         self.max_pooling_2 = MaxPooling2D(pool_size=kernel_pooling,
@@ -77,23 +75,23 @@ class Alexnet(BaseModel):
 
         self.conv_3 = Conv2D(384, (3,3), name='3Conv',
                             activation = activation,
-                            kernel_initializer=normal,
+                            kernel_initializer=initializer,
                             bias_initializer=zero,
-                            strides=(4,4),
+                            # strides=(4,4),
                             padding=pad)
 
         self.conv_4 = Conv2D(384, (3,3), name='4Conv',
                             activation = activation,
-                            kernel_initializer=normal,
+                            kernel_initializer=initializer,
                             bias_initializer=one,
-                            strides=(4,4),
+                            # strides=(4,4),
                             padding=pad)
 
         self.conv_5 = Conv2D(256, (3,3), name='5Conv',
                             activation = activation,
-                            kernel_initializer=normal,
+                            kernel_initializer=initializer,
                             bias_initializer=one,
-                            strides=(4,4),
+                            # strides=(4,4),
                             padding=pad)
 
         self.max_pooling_3 = MaxPooling2D(pool_size=kernel_pooling,
@@ -103,17 +101,17 @@ class Alexnet(BaseModel):
 
         self.dense_1 = Dense(4096, activation = activation,
                             name='1dense',
-                            kernel_initializer=normal,
+                            kernel_initializer=initializer,
                             bias_initializer=one)
 
         self.dense_2 = Dense(4096, activation = activation,
                             name='2dense',
-                            kernel_initializer=normal,
+                            kernel_initializer=initializer,
                             bias_initializer=one)
 
         self.dense_3 = Dense(10, activation = 'softmax',
                             name='classifier',
-                            kernel_initializer=normal,
+                            kernel_initializer=initializer,
                             bias_initializer=zero)
 
         self.build()
