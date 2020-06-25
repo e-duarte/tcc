@@ -86,6 +86,7 @@ for model in models:
                             target_set=(train_labels, test_labels),
                             trainner=trainner)
     kfold.execute()
+    print('Saving the {}'.format(model.name))
     SaveModel(model(), dir_name=dir_save)
 
 
