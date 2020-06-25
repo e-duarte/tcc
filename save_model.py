@@ -10,6 +10,13 @@ class SaveModel:
     def save_model(self):
         path = self.dir_name + self.file_name + '.h5'
         self.model.save(path)
+    
+    def save_results(self, results):
+        path = self.dir_name + self.file_name + '.csv'
+        df = pd.DataFrame(results)
+        with open(path, mode='w') as f:
+            df.to_csv(f)
+
 
     def save_history_csv(self, history):
         df = pd.DataFrame(history.history)
