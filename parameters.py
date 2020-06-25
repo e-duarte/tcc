@@ -11,4 +11,5 @@ params_exp = {
     'data_augmentation':False,
     'decay_rate': True,
     'type':'conv'
+    'dir_save'
 }

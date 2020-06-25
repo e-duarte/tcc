@@ -23,6 +23,7 @@ load_model = params_exp['load_model']
 data_augmentation = params_exp['data_augmentation']
 decay = params_exp['decay_rate']
 type = params_exp['type']
+dir_save = params_exp['dir_save']
 
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 
@@ -85,7 +86,7 @@ for model in models:
                             target_set=(train_labels, test_labels),
                             trainner=trainner)
     kfold.execute()
-    SaveModel(model(), dir_name='./stored_models/')
+    SaveModel(model(), dir_name=dir_save)
 
 
 
