@@ -86,9 +86,10 @@ for model in models:
                             target_set=(train_labels, test_labels),
                             trainner=trainner)
     results = kfold.execute()
-    print('Saving the {}'.format(model.name))
+    print(results)
+    print('Saving results for the {}'.format(model.name))
     save = SaveModel(model(), dir_name=dir_save)
-    save.save_model()
+    # save.save_model()
     save.save_results(results)
 
 

@@ -25,6 +25,6 @@ class KFoldValidation:
             n_fold += 1
         
         for metric in results:
-            results[metric] = np.mean(results[metric])
+            results[metric] = [np.mean(results[metric])]
         return results
 
