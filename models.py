@@ -40,7 +40,7 @@ class Alexnet(BaseModel):
         self.name = name
         
         if initializers:
-            initializer = keras.initializers.Randominitializer(mean=0.0, stddev=1e-2)
+            initializer = keras.initializers.RandomNormal(mean=0.0, stddev=1e-2)
             one = keras.initializers.Ones()
             zero = keras.initializers.Zeros()
 
