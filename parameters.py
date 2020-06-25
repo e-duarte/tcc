@@ -10,6 +10,6 @@ params_exp = {
     'load_model': False,
     'data_augmentation':False,
     'decay_rate': True,
-    'dir_save': 'drive/My Drive/Colab Notebooks/stored_models/',
     'type':'conv',
+    'dir_save': 'drive/My Drive/Colab Notebooks/stored_models/',
 }
