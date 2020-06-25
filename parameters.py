@@ -5,7 +5,7 @@ params_exp = {
     'loss': 'categorical_crossentropy',
     'metrics': ['categorical_accuracy', 'Precision'],
     'initializers': True,
-    'epochs': 1,
+    'epochs': 1 ,
     'batch_size': 256,
     'load_model': False,
     'data_augmentation':False,
