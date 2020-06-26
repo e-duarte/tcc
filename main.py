@@ -82,7 +82,7 @@ trainner = training()
 results = []
 for model in models:
     kfold = KFoldValidation(model,
-                            k=1, 
+                            k=2, 
                             train_set=(train_images, test_images), 
                             target_set=(train_labels, test_labels),
                             trainner=trainner)
