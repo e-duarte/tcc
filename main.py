@@ -122,8 +122,10 @@ else:
         for i, metric in enumerate(model().metrics_names):
                 result[metric] = []
                 result[metric].append(scores[i])
+        result['model'] = mode().name
         results.append(result)
     results = concat_dict(results)
+    print('Saving results for the models')
     save = SaveModel(model=None, dir_name=dir_save)
     save.save_results(results)
     
