@@ -12,4 +12,5 @@ params_exp = {
     'decay_rate': True,
     'type':'conv',
     'dir_save': 'drive/My Drive/Colab Notebooks/results/',
+    'cross': False
 }

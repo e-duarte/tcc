@@ -24,6 +24,7 @@ data_augmentation = params_exp['data_augmentation']
 decay = params_exp['decay_rate']
 type = params_exp['type']
 dir_save = params_exp['dir_save']
+cross = params_exp['cross']
 
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 
@@ -87,22 +88,39 @@ def training():
                                     
     return Trainner(epochs=epochs,batch_size=batch, data_augmentation=datagen, callbacks=callbacks)
 
+def apply_kfold(models):
+    results = []
+    for model in models:
+        kfold = KFoldValidation(model,
+                                k=2, 
+                                train_set=(train_images, test_images), 
+                                target_set=(train_labels, test_labels),
+                                trainner=trainner)
+        results.append(kfold.execute())
+    results = concat_dict(results)
+
+    return results
+
 models = initialize_models()
 preprocessing_data()
 trainner = training()
 
-results = []
-for model in models:
-    kfold = KFoldValidation(model,
-                            k=2, 
-                            train_set=(train_images, test_images), 
-                            target_set=(train_labels, test_labels),
-                            trainner=trainner)
-    results.append(kfold.execute())
-results = concat_dict(results)
-print('Saving results for the models')
-save = SaveModel(model(), dir_name=dir_save)
-save.save_results(results)
+if cross:
+    results = apply_kfold(models)
+    print('Saving results for the models')
+    save = SaveModel(model=None, dir_name=dir_save)
+    save.save_results(results)
+else:
+    results = []
+    for model in models:
+        history = trainner.train_model(train_images, train_labels, model)
+        results.append(history.history)
+    results = concat_dict(results)
+        save = SaveModel(model=None, dir_name=dir_save)
+    save.save_results(results)
+    
+
+
 
 
 # model.summary()

@@ -3,9 +3,9 @@ from datetime import datetime
 
 
 class SaveModel:
-    def __init__(self,  model, dir_name='./'):
+    def __init__(self,  model=None, dir_name='./'):
         self.dir_name = dir_name
-        self.file_name = model.name
+        self.file_name = model.name if model else '' 
         self.model = model
     
     def get_date(self):
