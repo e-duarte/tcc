@@ -27,6 +27,7 @@ dir_save = params_exp['dir_save']
 cross = params_exp['cross']
 
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+print(test_images.shape)
 
 
 def concat_dict(dicts):
