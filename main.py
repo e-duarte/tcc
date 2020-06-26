@@ -116,6 +116,7 @@ else:
     for model in models:
         print('\n------[Training and Evaluate {} model]------------------'.format(model.name))
         trainner.train_model(train_images, train_labels, model())
+        print('Avaluating model-------------------------------------------------------------')
         scores = model().evaluate(test_images, test_labels)
         result = {}
         for i, metric in enumerate(model().metrics_names):

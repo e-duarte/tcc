@@ -18,6 +18,7 @@ class KFoldValidation:
             print('\n{}-fold'.format(n_fold))
             self.trainner.train_model(self.inputs[train], self.targets[train], self.model())
             self.model.resetting_weight()
+            print('Avaluating model-------------------------------------------------------------')
             scores = self.model().evaluate(self.inputs[test], self.targets[test])
             for i, metric in enumerate(self.model().metrics_names):
                 results[metric] = []
