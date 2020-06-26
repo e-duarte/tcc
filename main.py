@@ -106,8 +106,6 @@ models = initialize_models()
 preprocessing_data()
 trainner = training()
 
-
-print(train_images.shape, test_images.shape)
 if cross:
     results = apply_kfold(models)
     print('Saving results for the models')
