@@ -114,7 +114,7 @@ else:
     results = []
     for model in models:
         trainner.train_model(train_images, train_labels, model())
-        scores = model().fit(test_image, test_label)
+        scores = model().fit(test_images, test_labels)
         results.append(scores)
     results = concat_dict(results)
     save = SaveModel(model=None, dir_name=dir_save)
