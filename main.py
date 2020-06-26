@@ -116,7 +116,7 @@ else:
         history = trainner.train_model(train_images, train_labels, model)
         results.append(history.history)
     results = concat_dict(results)
-        save = SaveModel(model=None, dir_name=dir_save)
+    save = SaveModel(model=None, dir_name=dir_save)
     save.save_results(results)
     
 
