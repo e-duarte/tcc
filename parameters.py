@@ -5,11 +5,11 @@ params_exp = {
     'loss': 'categorical_crossentropy',
     'metrics': ['categorical_accuracy', 'Precision', 'TruePositives', 'FalsePositives', 'TrueNegatives', 'FalseNegatives'],
     'initializers': True,
-    'epochs': 90 ,
+    'epochs': 1,
     'batch_size': 256,
     'load_model': False,
     'data_augmentation':False,
     'decay_rate': True,
     'type':'conv',
-    'dir_save': 'drive/My Drive/Colab Notebooks/stored_models/',
+    'dir_save': 'drive/My Drive/Colab Notebooks/results/',
 }

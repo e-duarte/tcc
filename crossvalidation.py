@@ -23,7 +23,7 @@ class KFoldValidation:
                 results[metric] = []
                 results[metric].append(scores[i])
             n_fold += 1
-        
+        results['model'] = [self.model().name]
         for metric in results:
             results[metric] = [np.mean(results[metric])]
         return results

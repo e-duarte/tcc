@@ -79,21 +79,18 @@ models = initialize_models()
 preprocessing_data()
 trainner = training()
 
-
+results = []
 for model in models:
     kfold = KFoldValidation(model, 
                             train_set=(train_images, test_images), 
                             target_set=(train_labels, test_labels),
                             trainner=trainner)
-    results = kfold.execute()
-    print(results)
-    print('Saving results for the {}'.format(model.name))
-    save = SaveModel(model(), dir_name=dir_save)
-    # save.save_model()
-    save.save_results(results)
-
-
-
+    results.append(kfold.execute())
+    
+print('Saving results for the models')
+# save.save_model()
+save = SaveModel(model(), dir_name=dir_save)
+save.save_results(pd.concat(results))
 
 
 # model.summary()
