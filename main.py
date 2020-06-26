@@ -82,7 +82,7 @@ trainner = training()
 results = []
 for model in models:
     kfold = KFoldValidation(model,
-                            k=5, 
+                            k=2, 
                             train_set=(train_images, test_images), 
                             target_set=(train_labels, test_labels),
                             trainner=trainner)
@@ -90,9 +90,6 @@ for model in models:
 
 print('Saving results for the models')
 # save.save_model()
-
-for key in results[0]
-
 save = SaveModel(model(), dir_name=dir_save)
 save.save_results(pd.concat(results).to_dict())
 
