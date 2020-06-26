@@ -117,7 +117,7 @@ else:
     results = []
     for model in models:
         trainner.train_model(train_images, train_labels, model())
-        scores = model().evaluate(test_images, test_labels, batch_size=0)
+        scores = model().evaluate(test_images, test_labels, batch_size=10000)
         result = {}
         for i, metric in enumerate(model().metrics_names):
                 result[metric] = []
