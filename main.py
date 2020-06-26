@@ -40,9 +40,6 @@ def concat_dict(dicts):
     
     return dict_join
     
-    
-    for k, v in dict3.items():
-        print(k, v)
 def build_and_compile_model(model_name, initializers, size, params_compile):
     model = None
     if model_name == 'alexnet':
@@ -86,7 +83,7 @@ def training():
                                     height_shift_range=0.1,
                                     horizontal_flip=True)
     if decay:
-        callbacks.append(ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=50, min_lr=0.1e-4))
+        callbacks.append(ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=50, min_lr=0.1e-3))
                                     
     return Trainner(epochs=epochs,batch_size=batch, data_augmentation=datagen, callbacks=callbacks)
 
