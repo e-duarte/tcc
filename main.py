@@ -118,7 +118,11 @@ else:
     for model in models:
         trainner.train_model(train_images, train_labels, model())
         scores = model().fit(test_images, test_labels)
-        results.append(scores)
+        result = {}
+        for i, metric in enumerate(model().metrics_names):
+                result[metric] = []
+                result[metric].append(scores[i])
+        results.append(result)
     results = concat_dict(results)
     save = SaveModel(model=None, dir_name=dir_save)
     save.save_results(results)
