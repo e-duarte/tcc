@@ -4,7 +4,7 @@ params_exp = {
     'opt_params': {'learning_rate':0.01, 'momentum':0.9, 'decay':0.1e-3},
     'loss': 'categorical_crossentropy',
     'metrics': ['categorical_accuracy', 'Precision', 'TruePositives', 'FalsePositives', 'TrueNegatives', 'FalseNegatives'],
-    # 'initializers': True,
+    'initializers': False,
     'epochs': 1,
     'batch_size': 256,
     'load_model': False,
