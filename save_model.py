@@ -10,7 +10,7 @@ class SaveModel:
     
     def get_date(self):
         now = datetime.now()
-        return '{}_{}_{}'.format(now.day, now.month, now.day)
+        return '{}_{}_{}'.format(now.day, now.month, now.year)
 
     def save_model(self):
         path = self.dir_name + self.file_name + self.get_date() + '.h5'
