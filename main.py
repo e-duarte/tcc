@@ -27,7 +27,7 @@ dir_save = params_exp['dir_save']
 cross = params_exp['cross']
 
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
-print(test_images.shape)
+
 
 
 def concat_dict(dicts):
@@ -106,6 +106,8 @@ models = initialize_models()
 preprocessing_data()
 trainner = training()
 
+
+print(train_images, test_images.shape)
 if cross:
     results = apply_kfold(models)
     print('Saving results for the models')
