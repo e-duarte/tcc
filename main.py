@@ -86,7 +86,7 @@ for model in models:
                             train_set=(train_images, test_images), 
                             target_set=(train_labels, test_labels),
                             trainner=trainner)
-    results.append(kfold.execute())
+    results.append(pd.DataFrame(kfold.execute()))
 
 print('Saving results for the models')
 # save.save_model()
