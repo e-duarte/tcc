@@ -64,7 +64,7 @@ class Alexnet(BaseModel):
         self.conv_2 = Conv2D(256, (5,5), name='2Conv',
                             activation = activation,
                             kernel_initializer=initializer,
-                            bias_initializer=ones ,
+                            bias_initializer=ones,
                             # strides=(4,4),
                             padding=pad)
 
@@ -83,14 +83,14 @@ class Alexnet(BaseModel):
         self.conv_4 = Conv2D(384, (3,3), name='4Conv',
                             activation = activation,
                             kernel_initializer=initializer,
-                            bias_initializer=ones ,
+                            bias_initializer=ones,
                             # strides=(4,4),
                             padding=pad)
 
         self.conv_5 = Conv2D(256, (3,3), name='5Conv',
                             activation = activation,
                             kernel_initializer=initializer,
-                            bias_initializer=ones ,
+                            bias_initializer=ones,
                             # strides=(4,4),
                             padding=pad)
 
@@ -112,7 +112,7 @@ class Alexnet(BaseModel):
         self.dense_3 = Dense(10, activation = 'softmax',
                             name='classifier',
                             kernel_initializer=initializer,
-                            bias_initializer=zeros)
+                            bias_initializer=ones)
 
         self.build()
 
