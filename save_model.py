@@ -17,7 +17,7 @@ class SaveModel:
         self.model.save(path)
     
     def save_results(self, results):
-        path = self.dir_name + self.file_name + self.get_date() + '.csv'
+        path = self.dir_name + 'experiment' + self.get_date() + '.csv'
         df = pd.DataFrame(results)
         with open(path, mode='w') as f:
             df.to_csv(f)
