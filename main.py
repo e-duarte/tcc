@@ -81,12 +81,13 @@ trainner = training()
 
 results = []
 for model in models:
-    kfold = KFoldValidation(model, 
+    kfold = KFoldValidation(model,
+                            k=1, 
                             train_set=(train_images, test_images), 
                             target_set=(train_labels, test_labels),
                             trainner=trainner)
     results.append(kfold.execute())
-    
+
 print('Saving results for the models')
 # save.save_model()
 save = SaveModel(model(), dir_name=dir_save)
