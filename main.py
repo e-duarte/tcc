@@ -113,8 +113,9 @@ if cross:
 else:
     results = []
     for model in models:
-        history = trainner.train_model(train_images, train_labels, model)
-        results.append(history.history)
+        trainner.train_model(train_images, train_labels, model())
+        scores = model().fit(test_image, test_label)
+        results.append(scores)
     results = concat_dict(results)
     save = SaveModel(model=None, dir_name=dir_save)
     save.save_results(results)
