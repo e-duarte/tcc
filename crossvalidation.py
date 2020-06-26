@@ -9,12 +9,14 @@ class KFoldValidation:
         self.kfold = KFold(n_splits=k, shuffle=True)
         self.trainner = trainner
         self.model = model
+        print(self.inputs.shape)
 
     def execute(self):
         results = {}
         n_fold = 1
         print('\n------[executing k-fold for {} model]------------------'.format(self.model.name))
         for train, test in self.kfold.split(self.inputs, self.targets):
+            print(train.shape, test.shape)
             print('\n{}-fold'.format(n_fold))
             self.trainner.train_model(self.inputs[train], self.targets[train], self.model())
             self.model.resetting_weight()
@@ -23,8 +25,9 @@ class KFoldValidation:
                 results[metric] = []
                 results[metric].append(scores[i])
             n_fold += 1
-        results['model'] = [self.model().name]
+        
         for metric in results:
             results[metric] = [np.mean(results[metric])]
+        results['model'] = [self.model.name]
         return results
 
