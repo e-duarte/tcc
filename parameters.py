@@ -8,7 +8,7 @@ params_exp = {
     'epochs': 1,
     'batch_size': 256,
     'load_model': False,
-    'data_augmentation':False,
+    'data_augmentation':True,
     'decay_rate': True,
     'type':'conv',
     'dir_save': 'drive/My Drive/Colab Notebooks/results/',

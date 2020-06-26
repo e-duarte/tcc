@@ -28,5 +28,8 @@ class KFoldValidation:
         for metric in results:
             results[metric] = [np.mean(results[metric])]
         results['model'] = [self.model.name]
+
+        print("Result for the {} model".format(self.model.name))
+        print(results)
         return results
 
