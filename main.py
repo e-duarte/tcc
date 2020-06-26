@@ -10,6 +10,7 @@ from models import Alexnet, Resnet34, DeepAutoencoder
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import LearningRateScheduler, ReduceLROnPlateau
 from utils import preprocessing, expand_dims, vetorizar_data, to_categorical
+from collections import defaultdict
 
 models_names = params_exp['models']
 optimizer = params_exp['optimizer']
@@ -28,6 +29,21 @@ dir_save = params_exp['dir_save']
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 
 
+def concat_dict(dicts):
+    dict_join = {}
+
+    for key in dicts[0]:
+            dict_join[key] = []
+
+    for d in dicts:
+        for key in d:
+            dict_join[key] = dict_join[key] + d[key]
+    
+    return dict_join
+    
+    
+    for k, v in dict3.items():
+        print(k, v)
 def build_and_compile_model(model_name, initializers, size, params_compile):
     model = None
     if model_name == 'alexnet':
@@ -86,16 +102,11 @@ for model in models:
                             train_set=(train_images, test_images), 
                             target_set=(train_labels, test_labels),
                             trainner=trainner)
-    results.append(pd.DataFrame(kfold.execute()))
-
-print(results)
+    results.append(kfold.execute())
+results = concat_dict(results)
 print('Saving results for the models')
-# save.save_model()
-print(pd.concat(results))
-print(pd.concat(results).to_dict())
-print(pd.DataFrame(pd.concat(results).to_dict()))
 save = SaveModel(model(), dir_name=dir_save)
-save.save_results(pd.concat(results).to_dict())
+save.save_results(results)
 
 
 # model.summary()
