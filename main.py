@@ -10,7 +10,6 @@ from models import Alexnet, Resnet34, DeepAutoencoder
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import LearningRateScheduler, ReduceLROnPlateau
 from utils import preprocessing, expand_dims, vetorizar_data, to_categorical
-from collections import defaultdict
 
 models_names = params_exp['models']
 optimizer = params_exp['optimizer']
