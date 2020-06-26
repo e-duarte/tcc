@@ -93,6 +93,7 @@ print('Saving results for the models')
 # save.save_model()
 print(pd.concat(results))
 print(pd.concat(results).to_dict())
+print(pd.DataFrame(pd.concat(results).to_dict()))
 save = SaveModel(model(), dir_name=dir_save)
 save.save_results(pd.concat(results).to_dict())
 
