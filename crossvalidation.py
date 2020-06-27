@@ -16,6 +16,8 @@ class KFoldValidation:
         print('\n------[executing k-fold for {} model]------------------'.format(self.model.name))
         for train, test in self.kfold.split(self.inputs, self.targets):
             print('\n{}-fold'.format(n_fold))
+
+            train_labels, _ = to_categorical(self.targets[train], None)
             self.trainner.train_model(self.inputs[train], self.targets[train], self.model())
             self.model.resetting_weight()
             print('Avaluating model-------------------------------------------------------------')
