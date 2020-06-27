@@ -4,7 +4,7 @@ from tensorflow.keras.datasets import mnist
 import matplotlib.pyplot as plt
 from PIL import Image
 from tensorflow.keras.preprocessing.image import array_to_img, img_to_array
-from utils import to_categorical
+
 def preprocessing(train_images, test_images):
     return train_images.astype('float32')/255, test_images.astype('float32')/255
 

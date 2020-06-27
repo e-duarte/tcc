@@ -1,6 +1,7 @@
 from tensorflow.keras import datasets
 from sklearn.model_selection import KFold, StratifiedKFold
 import numpy as np
+from utils import to_categorical
 
 class KFoldValidation:
     def __init__(self, model, train_set=None, target_set=None, k=5, trainner=None):
