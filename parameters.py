@@ -10,7 +10,7 @@ params_exp = {
                 'FalsePositives', 
                 'TrueNegatives', 
                 'FalseNegatives',
-                'auc'],
+                'AUC'],
     'initializers': False,
     'epochs': 1,
     'batch_size': 256,
