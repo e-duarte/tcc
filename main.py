@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from metrics import f1_score
 from save_model import SaveModel
 from optimizers import Optimizers
 from parameters import params_exp
@@ -27,8 +28,6 @@ dir_save = params_exp['dir_save']
 cross = params_exp['cross']
 
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
-
-
 
 def concat_dict(dicts):
     dict_join = {}
@@ -59,7 +58,7 @@ def initialize_models():
     params_compile = dict([
         ('optimizer', Optimizers(optimizer, opt_params).optimizer()),
         ('loss', loss),
-        ('metrics', metrics)
+        ('metrics', metrics.append(f1_score))
     ])
     
     for name in models_names:
