@@ -9,7 +9,8 @@ params_exp = {
                 'TruePositives', 
                 'FalsePositives', 
                 'TrueNegatives', 
-                'FalseNegatives'],
+                'FalseNegatives',
+                'auc'],
     'initializers': False,
     'epochs': 1,
     'batch_size': 256,
@@ -18,5 +19,5 @@ params_exp = {
     'decay_rate': True,
     'type':'conv',
     'dir_save': 'drive/My Drive/Colab Notebooks/results/',
-    'cross': False
+    'cross': True
 }

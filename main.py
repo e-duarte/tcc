@@ -55,10 +55,11 @@ def build_and_compile_model(model_name, initializers, size, params_compile):
 
 def initialize_models():
     models = []
+    metrics.append(f1_score)
     params_compile = dict([
         ('optimizer', Optimizers(optimizer, opt_params).optimizer()),
         ('loss', loss),
-        ('metrics', metrics.append(f1_score))
+        ('metrics', metrics)
     ])
     
     for name in models_names:
