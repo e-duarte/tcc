@@ -1,12 +1,12 @@
 from tensorflow.keras import datasets
-from sklearn.model_selection import KFold
+from sklearn.model_selection import KFold, StratifiedKFold
 import numpy as np
 
 class KFoldValidation:
     def __init__(self, model, train_set=None, target_set=None, k=5, trainner=None):
         self.inputs = np.concatenate((train_set[0], train_set[1]), axis=0)
         self.targets = np.concatenate((target_set[0], target_set[1]), axis=0)
-        self.kfold = KFold(n_splits=k, shuffle=True)
+        self.kfold = StratifiedKFold(n_splits=k, shuffle=True)
         self.trainner = trainner
         self.model = model
 
