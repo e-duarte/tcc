@@ -11,11 +11,11 @@ def preprocessing(train_images, test_images):
 def expand_dims(train, test):
     return np.expand_dims(train, -1), np.expand_dims(test, -1)
 
-def to_categorical(label_x, label_y):
+def to_categorical(label_x):
     label_x = utils.to_categorical(label_x, 10)
-    label_y = utils.to_categorical(label_y, 10)
+    # label_y = utils.to_categorical(label_y, 10)
 
-    return label_x, label_y
+    return label_x
 
 def vetorizar_data(train, test):
     train = train.reshape(len(train), np.prod(train.shape[1:]))
