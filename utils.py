@@ -2,7 +2,7 @@ import numpy as np
 from tensorflow.keras import utils
 from tensorflow.keras.datasets import mnist
 import matplotlib.pyplot as plt
-from PIL import Image
+# from PIL import Image
 from tensorflow.keras.preprocessing.image import array_to_img, img_to_array
 
 def preprocessing(train_images, test_images):
@@ -23,16 +23,16 @@ def vetorizar_data(train, test):
 
     return train, test
     
-def redimensionar(train, test):
-    # train = array_to_img(train[1])
-    # test = array_to_img(test)
-    print(train[1].shape)
-    train = train.resize((256,256), Image.ANTIALIAS)
-    test = test.resize((256,256), Image.ANTIALIAS)
-    train = img_to_array(train)
-    test = img_to_array(test)
+# def redimensionar(train, test):
+#     # train = array_to_img(train[1])
+#     # test = array_to_img(test)
+#     print(train[1].shape)
+#     train = train.resize((256,256), Image.ANTIALIAS)
+#     test = test.resize((256,256), Image.ANTIALIAS)
+#     train = img_to_array(train)
+#     test = img_to_array(test)
 
-    return train, test
+#     return train, test
 
 
 # def plot_images(encoder, autoencoder, data):

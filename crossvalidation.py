@@ -16,18 +16,19 @@ class KFoldValidation:
         n_fold = 1
         print('\n------[executing k-fold for {} model]------------------'.format(self.model.name))
         for train, test in self.kfold.split(self.inputs, self.targets):
-            print('\n{}-fold'.format(n_fold))
-
             targets_train = to_categorical(self.targets[train])
+            targets_test = to_categorical(self.targets[test])
+
+            print('\n{}-fold'.format(n_fold))
             self.trainner.train_model(self.inputs[train], targets_train, self.model())
             self.model.resetting_weight()
 
             print('Avaluating model-------------------------------------------------------------')
-            targets_test = to_categorical(self.targets[test])
             scores = self.model().evaluate(self.inputs[test], targets_test)
             for i, metric in enumerate(self.model().metrics_names):
                 results[metric] = []
                 results[metric].append(scores[i])
+                
             n_fold += 1
         
         for metric in results:
