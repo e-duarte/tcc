@@ -51,8 +51,14 @@ class Holdout(CrossValidation):
         self.trainner = trainner
         self.model = model
 
+
     def execute(self):
-        train_x, train_y, test_x, test_y  = train_test_split(self.inputs, self.targets, test_size=0.2, random_state=0)
+        train_x, test_x, train_y, test_y  = train_test_split(self.inputs, self.targets, test_size=0.2, random_state=0)
+        print(train_x.shape, test_x.shape)
+
+        train_y = to_categorical(train_y)
+        test_y = to_categorical(test_y)
+
         self.trainner.train_model(train_x, train_y, self.model())
         scores = self.model().evaluate(test_x, test_y)
 

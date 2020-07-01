@@ -92,11 +92,11 @@ def training():
 def apply_kfold(models):
     results = []
     for model in models:
-        kfold = KFoldValidation(model,
-                                k=2, 
-                                train_set=(train_images, test_images), 
-                                target_set=(train_labels, test_labels),
-                                trainner=trainner)
+        # kfold = KFoldValidation(model,
+        #                         k=2, 
+        #                         train_set=(train_images, test_images), 
+        #                         target_set=(train_labels, test_labels),
+        #                         trainner=trainner)
         kfold = Holdout(model,
                         train_set=(train_images, test_images), 
                         target_set=(train_labels, test_labels),
