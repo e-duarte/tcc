@@ -1,9 +1,14 @@
 from tensorflow.keras import datasets
-from sklearn.model_selection import KFold, StratifiedKFold
+from sklearn.model_selection import KFold, StratifiedKFold, train_test_split
 import numpy as np
 from utils import to_categorical
 
-class KFoldValidation:
+class CrossValidation:
+    def execute(self):
+        print('__execute')
+
+
+class KFoldValidation(CrossValidation):
     def __init__(self, model, train_set=None, target_set=None, k=5, trainner=None):
         self.inputs = np.concatenate((train_set[0], train_set[1]), axis=0)
         self.targets = np.concatenate((target_set[0], target_set[1]), axis=0)
@@ -39,3 +44,21 @@ class KFoldValidation:
         print(results)
         return results
 
+class Holdout(CrossValidation):
+    def __init__(self, model, train_set=None, target_set=None, trainner=None):
+        self.inputs = np.concatenate((train_set[0], train_set[1]), axis=0)
+        self.targets = np.concatenate((target_set[0], target_set[1]), axis=0)
+        self.trainner = trainner
+        self.model = model
+
+    def execute(self):
+        train_x, train_y, test_x, test_y  = train_test_split(self.inputs, self.targets, test_size=0.2, random_state=0)
+        self.trainner.train_model(train_x, train_y, self.model())
+        scores = self.model().evaluate(test_x, test_y)
+
+        results = {}
+        for i, metric in enumerate(self.model().metrics_names):
+                results[metric] = []
+                results[metric].append(scores[i])
+
+        return results

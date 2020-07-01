@@ -6,7 +6,7 @@ from optimizers import Optimizers
 from parameters import params_exp
 from training_models import Trainner
 from tensorflow.keras.datasets import mnist
-from crossvalidation import KFoldValidation
+from crossvalidation import KFoldValidation, Holdout
 from models import Alexnet, Resnet34, DeepAutoencoder
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import LearningRateScheduler, ReduceLROnPlateau
@@ -97,6 +97,11 @@ def apply_kfold(models):
                                 train_set=(train_images, test_images), 
                                 target_set=(train_labels, test_labels),
                                 trainner=trainner)
+        kfold = Holdout(model,
+                        train_set=(train_images, test_images), 
+                        target_set=(train_labels, test_labels),
+                        trainner=trainner)
+
         results.append(kfold.execute())
     results = concat_dict(results)
 
