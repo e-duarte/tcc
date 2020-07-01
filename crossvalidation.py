@@ -53,6 +53,7 @@ class Holdout(CrossValidation):
 
 
     def execute(self):
+        print('\n------[executing Hold out for {} model]------------------'.format(self.model.name))
         train_x, test_x, train_y, test_y  = train_test_split(self.inputs, self.targets, test_size=0.2, random_state=0)
         print(train_x.shape, test_x.shape)
 
@@ -60,11 +61,14 @@ class Holdout(CrossValidation):
         test_y = to_categorical(test_y)
 
         self.trainner.train_model(train_x, train_y, self.model())
+
+        print('\n------[executing Hold out for {} model]------------------'.format(self.model.name))
         scores = self.model().evaluate(test_x, test_y)
 
         results = {}
         for i, metric in enumerate(self.model().metrics_names):
                 results[metric] = []
                 results[metric].append(scores[i])
-
+        results['model'] = [self.model.name]
+        
         return results

@@ -12,7 +12,7 @@ params_exp = {
                 'FalseNegatives',
                 'AUC'],
     'initializers': False,
-    'epochs': 1,
+    'epochs': 90,
     'batch_size': 256,
     'load_model': False,
     'data_augmentation':True,
