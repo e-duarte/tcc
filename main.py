@@ -93,7 +93,7 @@ def apply_kfold(models):
     results = []
     for model in models:
         kfold = KFoldValidation(model,
-                                k=2, 
+                                k=10, 
                                 train_set=(train_images, train_labels), 
                                 test_set=(test_images, test_labels),
                                 trainner=trainner)
