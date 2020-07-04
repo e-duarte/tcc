@@ -9,9 +9,11 @@ class CrossValidation:
 
 
 class KFoldValidation(CrossValidation):
-    def __init__(self, model, train_set=None, target_set=None, k=5, trainner=None):
-        self.inputs = np.concatenate((train_set[0], train_set[1]), axis=0)
-        self.targets = np.concatenate((target_set[0], target_set[1]), axis=0)
+    def __init__(self, model, train_set=None, test_set=None, k=5, trainner=None):
+        # self.inputs = np.concatenate((train_set[0], train_set[1]), axis=0)
+        # self.targets = np.concatenate((target_set[0], target_set[1]), axis=0)
+        self.train = train_set
+        self.test = test_set
         self.kfold = StratifiedKFold(n_splits=k, shuffle=True)
         self.trainner = trainner
         self.model = model
@@ -20,16 +22,20 @@ class KFoldValidation(CrossValidation):
         results = {}
         n_fold = 1
         print('\n------[executing k-fold for {} model]------------------'.format(self.model.name))
-        for train, test in self.kfold.split(self.inputs, self.targets):
-            targets_train = to_categorical(self.targets[train])
-            targets_test = to_categorical(self.targets[test])
+        for train, test in self.kfold.split(self.train[0], self.train[1]):
+            targets_train = to_categorical(self.train[1][train])
+            targets_test = to_categorical(self.train[1][test])
+            targets_test_1 = to_categorical(self.test[1])
 
             print('\n{}-fold'.format(n_fold))
-            self.trainner.train_model(self.inputs[train], targets_train, self.model())
+            self.trainner.train_model(self.train[train], targets_train, self.model())
             self.model.resetting_weight()
 
             print('Avaluating model-------------------------------------------------------------')
-            scores = self.model().evaluate(self.inputs[test], targets_test)
+            scores = self.model().evaluate(self.train[test], targets_test)
+            print('Testing model-------------------------------------------------------------')
+            scores = self.model().evaluate(self.test[0], targets_test_1)
+
             for i, metric in enumerate(self.model().metrics_names):
                 results[metric] = []
                 results[metric].append(scores[i])
