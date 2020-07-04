@@ -28,11 +28,11 @@ class KFoldValidation(CrossValidation):
             targets_test_1 = to_categorical(self.test[1])
 
             print('\n{}-fold'.format(n_fold))
-            self.trainner.train_model(self.train[train], targets_train, self.model())
+            self.trainner.train_model(self.train[0][train], targets_train, self.model())
             self.model.resetting_weight()
 
             print('Avaluating model-------------------------------------------------------------')
-            scores = self.model().evaluate(self.train[test], targets_test)
+            scores = self.model().evaluate(self.train[0][test], targets_test)
             print('Testing model-------------------------------------------------------------')
             scores = self.model().evaluate(self.test[0], targets_test_1)
 
