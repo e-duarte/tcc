@@ -1,12 +1,12 @@
-from sklearn.model_selection import cross_val_score,  ShuffleSplit
+from sklearn.model_selection import cross_val_score,  ShuffleSplit, cross_val_validate
 from models import Alexnet
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
 from utils import expand_dims, preprocessing, to_categorical
-from sklearn.metrics import recall_score
+# from sklearn.metrics import recall_score
 import numpy as np
 
-# scoring = ['accuracy_macro', 'precision_macro', 'recall_macro']
+scoring = ['precision_macro', 'recall_macro']
 
 (train_x, train_y), (test_x, test_y) = mnist.load_data()
 
@@ -36,6 +36,7 @@ def build_model():
 cv =  ShuffleSplit(n_splits=10, random_state=0)
 model = KerasClassifier(build_model, epochs=2, batch_size=256)
 
-scores = cross_val_score(model,  inputs, targets, cv=cv)
+# scores = cross_val_score(model,  inputs, targets, cv=cv)
+scores = cross_val_validate(model,  inputs, targets, cv=cv, scoring=scoring)
 
 print(scores.mean())
