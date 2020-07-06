@@ -1,4 +1,4 @@
-from sklearn.model_selection import cross_val_score,  ShuffleSplit, cross_val_validate
+from sklearn.model_selection import cross_val_score,  ShuffleSplit, cross_validate
 from models import Alexnet
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
@@ -37,7 +37,7 @@ cv =  ShuffleSplit(n_splits=5, random_state=0)
 model = KerasClassifier(build_model, epochs=2, batch_size=256)
 
 # scores = cross_val_score(model,  inputs, targets, cv=cv)
-scores = cross_val_validate(model,  inputs, targets, cv=cv, scoring=scoring)
+scores = cross_validate(model,  inputs, targets, cv=cv, scoring=scoring)
 
 print(scores['test_accuracy_score'].mean())
 print(scores)
