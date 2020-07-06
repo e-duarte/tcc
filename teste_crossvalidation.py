@@ -6,7 +6,11 @@ from utils import expand_dims, preprocessing, to_categorical
 from sklearn.metrics import recall_score, precision_score, accuracy_score
 import numpy as np
 
-scoring = [accuracy_score, precision_score, recall_score]
+# scoring = [accuracy_score, precision_score, recall_score]
+scoring = {
+            'accuracy':accuracy_score,
+            'precision':precision_score,
+            'recall':recall_score}
 
 (train_x, train_y), (test_x, test_y) = mnist.load_data()
 
