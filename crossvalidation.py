@@ -1,5 +1,5 @@
 from tensorflow.keras import datasets
-from sklearn.model_selection import KFold, StratifiedKFold, train_test_split
+from sklearn.model_selection import KFold, StratifiedKFold, train_test_split, cross_val_score
 import numpy as np
 from utils import to_categorical
 
@@ -80,3 +80,5 @@ class Holdout(CrossValidation):
         results['model'] = [self.model.name]
 
         return results
+
+
