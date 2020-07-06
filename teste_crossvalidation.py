@@ -40,3 +40,4 @@ model = KerasClassifier(build_model, epochs=2, batch_size=256)
 scores = cross_val_validate(model,  inputs, targets, cv=cv, scoring=scoring)
 
 print(scores['test_accuracy_score'].mean())
+print(scores)
