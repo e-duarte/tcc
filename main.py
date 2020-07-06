@@ -70,7 +70,7 @@ def initialize_models():
 def preprocessing_data():
     global train_images, test_images
     global train_labels, test_labels
-    preprocessing(train_images, test_images)
+    # preprocessing(train_images, test_images)
     if type == 'conv':    
         train_images, test_images = expand_dims(train_images, test_images)
         # train_labels, test_labels = to_categorical(train_labels, test_labels)

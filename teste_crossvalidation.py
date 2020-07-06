@@ -6,11 +6,11 @@ from utils import expand_dims, preprocessing, to_categorical
 from sklearn.metrics import recall_score, precision_score, accuracy_score
 import numpy as np
 
-# scoring = [accuracy_score, precision_score, recall_score]
-scoring = {
-            'accuracy':accuracy_score,
-            'precision':precision_score,
-            'recall':recall_score}
+scoring = ['precision_macro', 'recall_macro']
+# scoring = {
+#             'accuracy':accuracy_score,
+#             'precision':precision_score,
+#             'recall':recall_score}
 
 (train_x, train_y), (test_x, test_y) = mnist.load_data()
 
@@ -38,7 +38,7 @@ def build_model():
 
 
 cv =  ShuffleSplit(n_splits=5, random_state=0)
-model = KerasClassifier(build_model, epochs=2, batch_size=256)
+model = KerasClassifier(build_model, epochs=1, batch_size=128)
 
 # scores = cross_val_score(model,  inputs, targets, cv=cv)
 scores = cross_validate(model,  inputs, targets, cv=cv, scoring=scoring)
