@@ -6,7 +6,7 @@ from optimizers import Optimizers
 from parameters import params_exp
 from training_models import Trainner
 from tensorflow.keras.datasets import mnist
-from crossvalidation import KFoldValidation, Holdout
+from validation import KFoldValidation, Holdout
 from models import Alexnet, Resnet34, DeepAutoencoder
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import LearningRateScheduler, ReduceLROnPlateau
@@ -134,9 +134,6 @@ else:
     save = SaveModel(model=None, dir_name=dir_save)
     save.save_results(results)
     
-
-
-
 
 # model.summary()
 

@@ -21,4 +21,3 @@ params_exp = {
     'dir_save': 'drive/My Drive/Colab Notebooks/results/',
     'cross': True
 }
-    
