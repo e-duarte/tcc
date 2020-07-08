@@ -1,4 +1,4 @@
-from sklearn.model_selection import cross_val_score,  ShuffleSplit, cross_validate
+from sklearn.model_selection import cross_val_score,  ShuffleSplit, cross_validate, KFold
 from models import Alexnet
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
@@ -18,7 +18,7 @@ scoring = ['precision_macro', 'recall_macro']
 
 train_x, test_x = expand_dims(train_x, test_x)
 # train_x, test_x = preprocessing(train_x, test_y)
-train_y, test_y = to_categorical(train_y), to_categorical(test_y)
+# train_y, test_y = to_categorical(train_y), to_categorical(test_y)
 
 inputs = np.concatenate((train_x, test_x), axis=0)
 targets = np.concatenate((train_y, test_y),  axis=0)
@@ -45,3 +45,17 @@ scores = cross_val_score(model,  inputs, targets, cv=cv, scoring=accuracy_score)
 
 # print(scores['test_accuracy_score'].mean())
 print(scores)
+
+
+
+def kfold(model):
+    cross = KFold(n_splits=5, shuffle=True)
+    
+    for train, test in cross.split(inputs, targets):
+        model.fit(
+            inputs[train],
+            targets[train],
+            epochs=1, 
+            batch_size=128, 
+            validation_data=(inputs[test], targets[test])
+        )
