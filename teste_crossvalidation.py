@@ -37,14 +37,14 @@ def build_model():
     return model
 
 
-cv =  ShuffleSplit(n_splits=5, random_state=0)
-model = KerasClassifier(build_model, epochs=1, batch_size=128)
+# cv =  ShuffleSplit(n_splits=5, random_state=0)
+# model = KerasClassifier(build_model, epochs=1, batch_size=128)
 
-scores = cross_val_score(model,  inputs, targets, cv=cv, scoring=accuracy_score)
+# scores = cross_val_score(model,  inputs, targets, cv=cv, scoring=accuracy_score)
 # scores = cross_validate(model,  inputs, targets, cv=cv, scoring=scoring)
 
 # print(scores['test_accuracy_score'].mean())
-print(scores)
+# print(scores)
 
 
 
@@ -59,3 +59,5 @@ def kfold(model):
             batch_size=128, 
             validation_data=(inputs[test], targets[test])
         )
+
+kfold(build_model())
