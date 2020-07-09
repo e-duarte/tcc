@@ -87,7 +87,7 @@ def cross_validation(model, X, y, epochs, batch_size, cv, callbacks=[]):
     def get_model(model):
         return model
     
-    model = KerasClassifier(get_model, epochs=epochs, batch_size=batch_size)
+    model = KerasClassifier(get_model(model), epochs=epochs, batch_size=batch_size)
     scores = cross_val_score(model, X, y, cv=cv)
 
     return scores.mean()
