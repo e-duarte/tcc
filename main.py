@@ -30,6 +30,8 @@ cross = params_exp['cross']
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 
 def concat_dict(dicts):
+    if not dicts:
+        return []
     dict_join = {}
 
     for key in dicts[0]:
@@ -93,18 +95,19 @@ def apply_validation(models):
     results_kfold = []
     results_holdout = []
     for model in models:
-        kfold = KFoldValidation(model,
-                                k=10, 
-                                train_set=(train_images, train_labels), 
-                                test_set=(test_images, test_labels),
-                                trainner=trainner)
+        kfold = None
+        # kfold = KFoldValidation(model,
+        #                         k=10, 
+        #                         train_set=(train_images, train_labels), 
+        #                         test_set=(test_images, test_labels),
+        #                         trainner=trainner)
         holdout = Holdout(model,
                         train_set=(train_images, test_images), 
                         target_set=(train_labels, test_labels),
                         trainner=trainner)
-
-        results_kfold.append(kfold.execute())
-        results_kfold.append(kfold.execute())
+        if not kfold:
+            results_kfold.append(kfold.execute())
+        results_holdout.append(holdout.execute())
 
     results_kfold = concat_dict(results_kfold)
     results_holdout = concat_dict(results_holdout)
@@ -119,7 +122,8 @@ if cross:
     results_kfold, results_holdout = apply_validation(models)
     print('Saving results for the models')
     save = SaveModel(model=None, dir_name=dir_save)
-    save.save_results(results)
+    save.save_results(results_kfold)
+    save.save_results(results_holdout)
 else:
     results = []
     for model in models:
