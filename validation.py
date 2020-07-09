@@ -2,6 +2,7 @@ from tensorflow.keras import datasets
 from sklearn.model_selection import KFold, StratifiedKFold, train_test_split, cross_val_score
 import numpy as np
 from utils import to_categorical
+from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
 
 class CrossValidation:
     def execute(self):
@@ -82,3 +83,12 @@ class Holdout(CrossValidation):
         return results
 
 
+def cross_validation(model, X, y, epochs, batch_size, cv, callbacks=[]):
+    def get_model(model):
+        return model
+    
+    model = KerasClassifier(get_model, epochs=epochs, batch_size=batch_size, callbacks=callbacks)
+    scores = cross_val_score(model, X, y, cv=cv)
+
+    return scores.mean()
+    

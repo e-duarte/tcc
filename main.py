@@ -6,7 +6,7 @@ from optimizers import Optimizers
 from parameters import params_exp
 from training_models import Trainner
 from tensorflow.keras.datasets import mnist
-from validation import KFoldValidation, Holdout
+from validation import KFoldValidation, Holdout, cross_validation
 from models import Alexnet, Resnet34, DeepAutoencoder
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import LearningRateScheduler, ReduceLROnPlateau
@@ -95,18 +95,22 @@ def apply_validation(models):
     results_kfold = []
     results_holdout = []
     for model in models:
-        kfold = None
         # kfold = KFoldValidation(model,
         #                         k=10, 
         #                         train_set=(train_images, train_labels), 
         #                         test_set=(test_images, test_labels),
         #                         trainner=trainner)
+        inputs = np.concatenate((train_images, test_images), axis=0)
+        targets = np.concatenate((train_labels, test_labels), axis=0)
+
+        scores_kfold  = cross_validation(model,inputs, targets, epochs, batch, 10)
+        print(scores_kfold)
         holdout = Holdout(model,
                         train_set=(train_images, test_images), 
                         target_set=(train_labels, test_labels),
                         trainner=trainner)
-        if not kfold:
-            results_kfold.append(kfold.execute())
+
+        # results_kfold.append(kfold.execute())
         results_holdout.append(holdout.execute())
 
     results_kfold = concat_dict(results_kfold)
