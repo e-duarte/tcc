@@ -17,11 +17,12 @@ scoring = ['precision_macro', 'recall_macro']
 
 
 train_x, test_x = expand_dims(train_x, test_x)
-# train_x, test_x = preprocessing(train_x, test_y)
+train_x, test_x = preprocessing(train_x, test_y)
+print(train_x.shape)
 # train_y, test_y = to_categorical(train_y), to_categorical(test_y)
 
-inputs = np.concatenate((train_x, test_x), axis=0)
-targets = np.concatenate((train_y, test_y),  axis=0)
+# inputs = np.concatenate((train_x, test_x), axis=0)
+# targets = np.concatenate((train_y, test_y),  axis=0)
 
 # train[0] = train[0]/255
 
@@ -30,7 +31,7 @@ def build_model():
 
     model.compile(
         optimizer='sgd',
-        loss='categorical_crossentropy',
+        loss='sparse_categorical_crossentropy',
         metrics=['accuracy', 'Precision']
     )
 
@@ -51,13 +52,13 @@ def build_model():
 def kfold(model):
     cross = KFold(n_splits=5, shuffle=True)
     
-    for train, test in cross.split(inputs, targets):
+    for train, test in cross.split(test_x, test_y):
         model.fit(
-            inputs[train],
-            targets[train],
+            test_x[train],
+            test_y[train],
             epochs=1, 
             batch_size=128, 
-            validation_data=(inputs[test], targets[test])
+            # validation_data=(inputs[test], targets[test])
         )
 
 kfold(build_model())

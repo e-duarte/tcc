@@ -34,7 +34,7 @@ class Trainner():
             history = model.fit(x,
                         y,
                         epochs=self.epochs,
-                        validation_split=0.1,
+                        # validation_split=0.1,
                         # callbacks=self.callbacks,
                         # use_multiprocessing=True,
                         batch_size=self.batch_size,

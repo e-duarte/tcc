@@ -89,30 +89,34 @@ def training():
                                     
     return Trainner(epochs=epochs,batch_size=batch, data_augmentation=datagen, callbacks=callbacks)
 
-def apply_kfold(models):
-    results = []
+def apply_validation(models):
+    results_kfold = []
+    results_holdout = []
     for model in models:
         kfold = KFoldValidation(model,
                                 k=10, 
                                 train_set=(train_images, train_labels), 
                                 test_set=(test_images, test_labels),
                                 trainner=trainner)
-        # kfold = Holdout(model,
-        #                 train_set=(train_images, test_images), 
-        #                 target_set=(train_labels, test_labels),
-        #                 trainner=trainner)
+        holdout = Holdout(model,
+                        train_set=(train_images, test_images), 
+                        target_set=(train_labels, test_labels),
+                        trainner=trainner)
 
-        results.append(kfold.execute())
-    results = concat_dict(results)
+        results_kfold.append(kfold.execute())
+        results_kfold.append(kfold.execute())
 
-    return results
+    results_kfold = concat_dict(results_kfold)
+    results_holdout = concat_dict(results_holdout)
+
+    return results_kfold, results_holdout
 
 models = initialize_models()
 preprocessing_data()
 trainner = training()
 
 if cross:
-    results = apply_kfold(models)
+    results_kfold, results_holdout = apply_validation(models)
     print('Saving results for the models')
     save = SaveModel(model=None, dir_name=dir_save)
     save.save_results(results)
