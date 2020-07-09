@@ -75,7 +75,7 @@ def preprocessing_data():
     # preprocessing(train_images, test_images)
     if type == 'conv':    
         train_images, test_images = expand_dims(train_images, test_images)
-        # train_labels, test_labels = to_categorical(train_labels, test_labels)
+        train_labels, test_labels = to_categorical(train_labels, test_labels)
     else:
         train_images, test_images = vetorizar_data(train_images, test_images)
 
