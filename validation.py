@@ -102,12 +102,12 @@ class KFoldCustom:
                 dict_score[metric].append(scores[i])
 
     def execute(self, inputs, targets, model):
+        print('\n------[executing K-fold for {} model]------------------'.format(model().name))
         scores = {}
         scores['model'] = model().name
         n_fold = 1
         historys = []
         for train, test in self.split(inputs):
-            print('\n------[executing K-fold for {} model]------------------'.format(model().name))
             print('\n{}-fold'.format(n_fold))
             history = self.trainner.train_model(inputs[train],
                                         to_categorical(targets[train]), 
@@ -124,6 +124,9 @@ class KFoldCustom:
         
         for metric in {k:scores[k] for k in scores if k != 'model'}:
             scores[metric] = [np.mean(scores[metric])]
+
+        print("Result for the {} model".format(model().name))
+        print(scores)
 
         return scores, historys
                 
