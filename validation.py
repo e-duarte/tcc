@@ -114,7 +114,7 @@ class KFoldCustom:
                                         model())
 
             print('\nAvaluating model-------------------------------------------------------------')
-            scores_model = model().evaluate(inputs[train], to_categorical(targets[test]))
+            scores_model = model().evaluate(inputs[test], to_categorical(targets[test]))
 
             historys.append(history)
             self.add_score(model().metrics_names, scores, scores_model)
