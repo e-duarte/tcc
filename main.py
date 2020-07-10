@@ -6,7 +6,7 @@ from optimizers import Optimizers
 from parameters import params_exp
 from training_models import Trainner
 from tensorflow.keras.datasets import mnist
-from validation import KFoldValidation, Holdout, cross_validation
+from validation import KFoldValidation, Holdout, KFoldCustom
 from models import Alexnet, Resnet34, DeepAutoencoder
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import LearningRateScheduler, ReduceLROnPlateau
@@ -26,6 +26,7 @@ decay = params_exp['decay_rate']
 type = params_exp['type']
 dir_save = params_exp['dir_save']
 cross = params_exp['cross']
+k = params_exp['k-fold']
 
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 
@@ -93,43 +94,62 @@ def training():
     return Trainner(epochs=epochs,batch_size=batch, data_augmentation=datagen, callbacks=callbacks)
 
 def apply_validation(models):
-    results_kfold = []
-    results_holdout = []
+    scores_kfold = []
+    historys_models = []
+    # results_holdout = []
+    kfold = KFoldCustom(k=k, trainner=trainner)
     for model in models:
-        # kfold = KFoldValidation(model,
-        #                         k=10, 
-        #                         train_set=(train_images, train_labels), 
-        #                         test_set=(test_images, test_labels),
-        #                         trainner=trainner)
         inputs = np.concatenate((train_images, test_images), axis=0)
         targets = np.concatenate((train_labels, test_labels), axis=0)
 
-        scores_kfold  = cross_validation(model,inputs, targets, epochs, batch, 10)
-        print(scores_kfold)
-        holdout = Holdout(model,
-                        train_set=(train_images, test_images), 
-                        target_set=(train_labels, test_labels),
-                        trainner=trainner)
+        scores_model, history_model = kfold.execute(inputs, targets, model)
+
+        scores_kfold.append(scores_model)
+        historys_models.append(history_model)
+
+        # # kfold = KFoldValidation(model,
+        # #                         k=10, 
+        # #                         train_set=(train_images, train_labels), 
+        # #                         test_set=(test_images, test_labels),
+        # #                         trainner=trainner)
+        # inputs = np.concatenate((train_images, test_images), axis=0)
+        # targets = np.concatenate((train_labels, test_labels), axis=0)
+
+        # scores_kfold  = cross_validation(model,inputs, targets, epochs, batch, 10)
+        # print(scores_kfold)
+        # holdout = Holdout(model,
+        #                 train_set=(train_images, test_images), 
+        #                 target_set=(train_labels, test_labels),
+        #                 trainner=trainner)
 
         # results_kfold.append(kfold.execute())
-        results_holdout.append(holdout.execute())
+        # results_holdout.append(holdout.execute())
 
-    results_kfold = concat_dict(results_kfold)
-    results_holdout = concat_dict(results_holdout)
+    scores_kfold = concat_dict(scores_kfold)
+    # results_holdout = concat_dict(results_holdout)
 
-    return results_kfold, results_holdout
+    return scores_kfold, historys_models
 
 models = initialize_models()
 preprocessing_data()
 trainner = training()
 
 if cross:
-    results_kfold, results_holdout = apply_validation(models)
+    results_kfold, historys_models = apply_validation(models)
     print('Saving results for the models')
     save = SaveModel(model=None, dir_name=dir_save)
     save.save_results(results_kfold)
-    save.save_results(results_holdout)
+    for j, history in enumerate(historys_models):
+        for i, h in enumerate(history):
+            save.save_history_csv(history, models[j]().name + '_'+ str(i))
+    # save.save_results(results_holdout)
 else:
+    # inputs = np.concatenate((train_images, test_images), axis=0)
+    # targets = np.concatenate((train_labels, test_labels), axis=0)
+
+    # kfold = KFoldCustom(10, models[0], trainner)
+    # kfold.execute(inputs, targets)
+
     results = []
     for model in models:
         print('\n------[Training and Evaluate {} model]------------------'.format(model.name))

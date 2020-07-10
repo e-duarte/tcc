@@ -15,9 +15,10 @@ params_exp = {
     'epochs': 2,
     'batch_size': 256,
     'load_model': False,
-    'data_augmentation':True,
+    'data_augmentation':False,
     'decay_rate': True,
     'type':'conv',
     'dir_save': 'drive/My Drive/Colab Notebooks/results/',
-    'cross': True
+    'cross': True,
+    'k-fold': 10
 }

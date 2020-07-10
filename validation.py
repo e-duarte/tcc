@@ -82,13 +82,57 @@ class Holdout(CrossValidation):
 
         return results
 
+class KFoldCustom:
+    def __init__(self, k, trainner):
+        self.k = k
+        self.trainner = trainner
+    
+    def split(self, X):
+        n = X.shape[0]
+        i = 1
+        dataset = np.arange(0, n, dtype=int)
+        while i <= self.k:
+            idx = np.arange(n * (i - 1) / self.k, n * i / self.k, dtype=int)
+            yield np.array(list(set(dataset) - set(idx))), idx
+            i += 1
+    
+    def add_score(self, metrics, dict_score, scores):
+        for i, metric in enumerate(metrics):
+                dict_score[metric] = []
+                dict_score[metric].append(scores[i])
 
-def cross_validation(model, X, y, epochs, batch_size, cv, callbacks=[]):
-    def get_model(model):
-        return model
-    y = to_categorical(y)
-    model = KerasClassifier(get_model(model), epochs=epochs, batch_size=batch_size)
-    scores = cross_val_score(model, X, y, cv=cv)
+    def execute(self, inputs, targets, model):
+        scores = {}
+        scores['model'] = model().name
+        n_fold = 1
+        historys = []
+        for train, test in self.split(inputs):
+            print('\n------[executing K-fold for {} model]------------------'.format(model().name))
+            print('\n{}-fold'.format(n_fold))
+            history = self.trainner.train_model(inputs[train],
+                                        to_categorical(targets[train]), 
+                                        model())
 
-    return scores.mean()
+            print('\nAvaluating model-------------------------------------------------------------')
+            scores_model = model().evaluate(inputs[train], to_categorical(targets[test]))
+
+            historys.append(history)
+            self.add_score(model().metrics_names, scores, scores_model)
+
+            model.resetting_weight()
+            n_fold += 1
+        
+        for metric in {k:scores[k] for k in scores if k != 'model'}:
+            scores[metric] = [np.mean(scores[metric])]
+
+        return scores, historys
+                
+# def cross_validation(model, X, y, epochs, batch_size, cv, callbacks=[]):
+#     def get_model(model):
+#         return model()
+#     # y = to_categorical(y)
+#     model = KerasClassifier(get_model(model), epochs=epochs, batch_size=batch_size)
+#     scores = cross_val_score(model, X, y, cv=cv)
+
+#     return scores.mean()
     
