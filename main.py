@@ -104,6 +104,7 @@ def experiment():
     historys_models = []
     for i in k:
         for model in models:
+            model.resetting_weight()
             kfold = KFoldCustom(k=i, trainner=trainner)
             scores_model, history_model = kfold.execute(model, inputs, targets)
             scores_models.append(scores_model)
@@ -115,6 +116,7 @@ def experiment():
     historys_models = []
     for i in h:
         for model in models:
+            model.resetting_weight()
             holdout = Holdout(test_size=i, trainner=trainner)
             scores_model, history_model = holdout.execute(model, inputs, targets)
             scores_models.append(scores_model)
