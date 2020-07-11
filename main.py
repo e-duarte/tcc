@@ -134,8 +134,11 @@ print('Saving models results ===================================================
 for k in kfold:
     (scores, historys) = k
     save = SaveModel(dir_name=dir_save)
+
+    print('Saving model scores...')
     save.save_results(scores)
 
+    print('Saving models historys...')
     for j, history in enumerate(historys):
         for i, h in enumerate(history):
             save.save_history_csv(h, models[j]().name + '_k'+ str(i+1))
@@ -143,9 +146,13 @@ for k in kfold:
 for i, exp  in enumerate(holdout):
     (scores, history) = exp
     save = SaveModel(dir_name=dir_save)
+
+    print('Saving model scores...')
     save.save_results(scores)
+
+    print('Saving models historys...')
     for j in range(len(models)):
-        save.save_history_csv(history[j], models[j]().name + '_split'+ str(h[i]))
+        save.save_history_csv(history, models[j]().name + '_split'+ str(h[i]))
 
 # model.summary()
 
