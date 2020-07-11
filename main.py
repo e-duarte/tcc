@@ -140,11 +140,11 @@ for k in kfold:
         for i, h in enumerate(history):
             save.save_history_csv(h, models[j]().name + '_k'+ str(i+1))
 
-for exp, split  in holdout, h:
+for i, exp  in enumerate(holdout):
     (scores, history) = exp
     save = SaveModel(dir_name=dir_save)
     save.save_results(scores)
-    save.save_history_csv(history, models[j]().name + '_split'+ str(split))
+    save.save_history_csv(history, models[j]().name + '_split'+ str(h[i]))
 
 # model.summary()
 
