@@ -1,7 +1,6 @@
 import pandas as pd
 from datetime import datetime
 
-
 class SaveModel:
     def __init__(self,  model=None, dir_name='./'):
         self.dir_name = dir_name
@@ -23,7 +22,7 @@ class SaveModel:
             df.to_csv(f)
 
     def save_history_csv(self, history, name):
-        path = self.dir_name + '_' + name + self.get_date() + '.h5'
+        path = self.dir_name + '_' + name + '_' + self.get_date() + '.h5'
         df = pd.DataFrame(history.history)
-        with open(name, mode='w') as f:
+        with open(path, mode='w') as f:
             df.to_csv(f)

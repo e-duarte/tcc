@@ -6,7 +6,7 @@ from optimizers import Optimizers
 from parameters import params_exp
 from training_models import Trainner
 from tensorflow.keras.datasets import mnist
-from validation import KFoldValidation, Holdout, KFoldCustom
+from validation import Holdout, KFoldCustom
 from models import Alexnet, Resnet34, DeepAutoencoder
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import LearningRateScheduler, ReduceLROnPlateau
@@ -25,7 +25,7 @@ data_augmentation = params_exp['data_augmentation']
 decay = params_exp['decay_rate']
 type = params_exp['type']
 dir_save = params_exp['dir_save']
-cross = params_exp['cross']
+# cross = params_exp['cross']
 k = params_exp['k-fold']
 h = params_exp['holdout']
 
@@ -77,8 +77,6 @@ def preprocessing_data():
     # preprocessing(train_images, test_images)
     if type == 'conv':    
         train_images, test_images = expand_dims(train_images, test_images)
-        # train_labels = to_categorical(train_labels)
-        # test_labels = to_categorical(test_labels)
     else:
         train_images, test_images = vetorizar_data(train_images, test_images)
 
@@ -98,80 +96,53 @@ def experiment():
     kfold_exp = []
     holdout_exp = []
 
-def apply_validation(models):
-    scores_kfold = []
+    inputs = np.concatenate((train_images, test_images), axis=0)
+    targets = np.concatenate((train_labels, test_labels), axis=0)
+
+    print('\nApply K-fold==========================================================================')
+    scores_models = []
     historys_models = []
-    # results_holdout = []
-    kfold = KFoldCustom(k=k, trainner=trainner)
-    for model in models:
-        inputs = np.concatenate((train_images, test_images), axis=0)
-        targets = np.concatenate((train_labels, test_labels), axis=0)
-
-        scores_model, history_model = kfold.execute(inputs, targets, model)
-
-        scores_kfold.append(scores_model)
-        historys_models.append(history_model)
-
-        # # kfold = KFoldValidation(model,
-        # #                         k=10, 
-        # #                         train_set=(train_images, train_labels), 
-        # #                         test_set=(test_images, test_labels),
-        # #                         trainner=trainner)
-        # inputs = np.concatenate((train_images, test_images), axis=0)
-        # targets = np.concatenate((train_labels, test_labels), axis=0)
-
-        # scores_kfold  = cross_validation(model,inputs, targets, epochs, batch, 10)
-        # print(scores_kfold)
-        # holdout = Holdout(model,
-        #                 train_set=(train_images, test_images), 
-        #                 target_set=(train_labels, test_labels),
-        #                 trainner=trainner)
-
-        # results_kfold.append(kfold.execute())
-        # results_holdout.append(holdout.execute())
-
-    scores_kfold = concat_dict(scores_kfold)
-    # results_holdout = concat_dict(results_holdout)
-
-    return scores_kfold, historys_models
+    for i in k:
+        for model in models:
+            kfold = KFoldCustom(k=i, trainner=trainner)
+            scores_model, history_model = kfold.execute(model, inputs, targets)
+            scores_models.append(scores_model)
+            historys_models.append(history_model)
+        kfold_exp.append((concat_dict(scores_models), scores_models))
+    
+    print('\nApply Hold Out==========================================================================')
+    scores_models = []
+    historys_models = []
+    for i in h:
+        for model in models:
+            holdout = Holdout(test_size=i, trainner=trainner)
+            scores_model, history_model = holdout.execute(model, inputs, targets)
+            scores_models.append(scores_model)
+            historys_models.append(history_model)
+        holdout_exp.append((concat_dict(scores_models), scores_models))
+    
+    return kfold_exp, holdout_exp
 
 models = initialize_models()
 preprocessing_data()
 trainner = training()
+kfold, holdout = experiment()
 
-if cross:
-    results_kfold, historys_models = apply_validation(models)
-    print('\nSaving results for the models =====================================================')
-    save = SaveModel(model=None, dir_name=dir_save)
-    save.save_results(results_kfold)
-    for j, history in enumerate(historys_models):
+print('Saving models results ======================================================')
+for k in kfold:
+    (scores, historys) = k
+    save = SaveModel(dir_name=dir_save)
+    save.save_results(scores)
+
+    for j, history in enumerate(historys):
         for i, h in enumerate(history):
-            save.save_history_csv(h, models[j]().name + '_'+ str(i))
-    # save.save_results(results_holdout)
-else:
-    # inputs = np.concatenate((train_images, test_images), axis=0)
-    # targets = np.concatenate((train_labels, test_labels), axis=0)
+            save.save_history_csv(h, models[j]().name + '_k'+ str(i+1))
 
-    # kfold = KFoldCustom(10, models[0], trainner)
-    # kfold.execute(inputs, targets)
-
-    results = []
-    for model in models:
-        print('\n------[Training and Evaluate {} model]------------------'.format(model.name))
-        trainner.train_model(train_images, train_labels, model())
-        print('Avaluating model-------------------------------------------------------------')
-        scores = model().evaluate(test_images, test_labels)
-        result = {}
-        for i, metric in enumerate(model().metrics_names):
-                result[metric] = []
-                result[metric].append(scores[i])
-        result['model'] = [model().name]
-        results.append(result)
-    results = concat_dict(results)
-    print('Saving results for the models')
-    save = SaveModel(model=None, dir_name=dir_save)
-    save.save_results(results)
-    
+for exp, split  in holdout, h:
+    (scores, history) = exp
+    save = SaveModel(dir_name=dir_save)
+    save.save_results(scores)
+    save.save_history_csv(history, models[j]().name + '_split'+ str(split))
 
 # model.summary()
 
