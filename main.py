@@ -144,7 +144,8 @@ for i, exp  in enumerate(holdout):
     (scores, history) = exp
     save = SaveModel(dir_name=dir_save)
     save.save_results(scores)
-    save.save_history_csv(history, models[j]().name + '_split'+ str(h[i]))
+    for j in range(len(models)):
+        save.save_history_csv(history[j], models[j]().name + '_split'+ str(h[i]))
 
 # model.summary()
 

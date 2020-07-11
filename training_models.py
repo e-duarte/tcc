@@ -20,7 +20,7 @@ class Trainner():
                                         # save_best_only=True, mode='auto', save_freq=save_freq)
         # self.callbacks.append(checkpoint)
 
-    def train_model(self, x, y, model):
+    def train_model(self, x, y, model, validation_data=None):
         steps_per_epoch = int(len(x)/self.batch_size) if self.batch_size else None
     
         history = None
@@ -29,6 +29,7 @@ class Trainner():
                         epochs=self.epochs,
                         callbacks=self.callbacks,
                         # use_multiprocessing=True,
+                        validation_data=validation_data,
                         steps_per_epoch=steps_per_epoch)
         else:
             history = model.fit(x,

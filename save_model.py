@@ -22,7 +22,7 @@ class SaveModel:
             df.to_csv(f)
 
     def save_history_csv(self, history, name):
-        path = self.dir_name + '_' + name + '_' + self.get_date() + '.h5'
+        path = self.dir_name + '_' + name + '_' + self.get_date() + '.csv'
         df = pd.DataFrame(history.history)
         with open(path, mode='w') as f:
             df.to_csv(f)

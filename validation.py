@@ -26,7 +26,7 @@ class Holdout:
         train_y = to_categorical(train_y)
         test_y = to_categorical(test_y)
 
-        history = self.trainner.train_model(train_x, train_y, model())
+        history = self.trainner.train_model(train_x, train_y, model(), validation_data=(test_x,test_y))
 
         print('Avaluating model-------------------------------------------------------------')
         scores = model().evaluate(test_x, test_y)
@@ -68,7 +68,8 @@ class KFoldCustom:
             print('\n{}-fold'.format(n_fold))
             history = self.trainner.train_model(inputs[train],
                                         to_categorical(targets[train]), 
-                                        model())
+                                        model(),
+                                        validation_data=(test_x,test_y))
 
             print('\nAvaluating model-------------------------------------------------------------')
             scores_model = model().evaluate(inputs[test], to_categorical(targets[test]))
