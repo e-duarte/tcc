@@ -18,7 +18,8 @@ params_exp = {
     'data_augmentation':False,
     'decay_rate': True,
     'type':'conv',
-    'dir_save': 'drive/My Drive/Colab Notebooks/results/',
+    'dir_save': 'drive/My Drive/Colab Notebooks/results/experiment_convs',
     'cross': True,
-    'k-fold': 10
+    'k-fold': 10,
+    'holdout': [10, 20, 30],
 }

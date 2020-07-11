@@ -61,15 +61,15 @@ class Holdout(CrossValidation):
         self.model = model
 
 
-    def execute(self):
+    def execute(self, test_size):
         print('\n------[executing Hold out for {} model]------------------'.format(self.model.name))
-        train_x, test_x, train_y, test_y  = train_test_split(self.inputs, self.targets, test_size=0.1, random_state=0, shuffle=True)
+        train_x, test_x, train_y, test_y  = train_test_split(self.inputs, self.targets, test_size=test_size, random_state=0, shuffle=True)
         print(train_x.shape, test_x.shape)
 
         train_y = to_categorical(train_y)
         test_y = to_categorical(test_y)
 
-        self.trainner.train_model(train_x, train_y, self.model())
+        history = self.trainner.train_model(train_x, train_y, self.model())
 
         print('Avaluating model-------------------------------------------------------------')
         scores = self.model().evaluate(test_x, test_y)
@@ -80,7 +80,7 @@ class Holdout(CrossValidation):
                 results[metric].append(scores[i])
         results['model'] = [self.model.name]
 
-        return results
+        return results, history
 
 class KFoldCustom:
     def __init__(self, k, trainner):
@@ -104,7 +104,7 @@ class KFoldCustom:
     def execute(self, inputs, targets, model):
         print('\n------[executing K-fold for {} model]------------------'.format(model().name))
         scores = {}
-        scores['model'] = model().name
+        scores['model'] = [model().name]
         n_fold = 1
         historys = []
         for train, test in self.split(inputs):

@@ -27,6 +27,7 @@ type = params_exp['type']
 dir_save = params_exp['dir_save']
 cross = params_exp['cross']
 k = params_exp['k-fold']
+h = params_exp['holdout']
 
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 
@@ -93,6 +94,10 @@ def training():
                                     
     return Trainner(epochs=epochs,batch_size=batch, data_augmentation=datagen, callbacks=callbacks)
 
+def experiment():
+    kfold_exp = []
+    holdout_exp = []
+
 def apply_validation(models):
     scores_kfold = []
     historys_models = []
@@ -136,12 +141,12 @@ trainner = training()
 
 if cross:
     results_kfold, historys_models = apply_validation(models)
-    print('Saving results for the models')
+    print('\nSaving results for the models =====================================================')
     save = SaveModel(model=None, dir_name=dir_save)
     save.save_results(results_kfold)
     for j, history in enumerate(historys_models):
         for i, h in enumerate(history):
-            save.save_history_csv(history, models[j]().name + '_'+ str(i))
+            save.save_history_csv(h, models[j]().name + '_'+ str(i))
     # save.save_results(results_holdout)
 else:
     # inputs = np.concatenate((train_images, test_images), axis=0)
