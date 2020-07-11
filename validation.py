@@ -69,7 +69,7 @@ class KFoldCustom:
             history = self.trainner.train_model(inputs[train],
                                         to_categorical(targets[train]), 
                                         model(),
-                                        validation_data=(test_x,test_y))
+                                        validation_data=(inputs[test],targets[test]))
 
             print('\nAvaluating model-------------------------------------------------------------')
             scores_model = model().evaluate(inputs[test], to_categorical(targets[test]))
