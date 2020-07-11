@@ -1,4 +1,5 @@
 from sklearn.model_selection import train_test_split
+from sklearn.utils import shuffle as sh
 import numpy as np
 from utils import to_categorical
 
@@ -54,7 +55,10 @@ class KFoldCustom:
                 dict_score[metric] = []
                 dict_score[metric].append(scores[i])
 
-    def execute(self, model, inputs, targets):
+    def execute(self, model, inputs, targets, shuffle = False):
+        if shuffle:
+            inputs, targets = sh(inputs, targets, random_state=0)
+        
         print('\n------[executing {}-fold for {} model]------------------'.format(self.k, model().name))
         scores = {}
         scores['model'] = [model().name]

@@ -109,7 +109,7 @@ def experiment():
             scores_model, history_model = kfold.execute(model, inputs, targets)
             scores_models.append(scores_model)
             historys_models.append(history_model)
-        kfold_exp.append((concat_dict(scores_models), scores_models))
+        kfold_exp.append((concat_dict(scores_models), historys_models))
     
     print('\nApply Hold Out==========================================================================')
     scores_models = []
@@ -121,7 +121,7 @@ def experiment():
             scores_model, history_model = holdout.execute(model, inputs, targets)
             scores_models.append(scores_model)
             historys_models.append(history_model)
-        holdout_exp.append((concat_dict(scores_models), scores_models))
+        holdout_exp.append((concat_dict(scores_models), historys_models))
     
     return kfold_exp, holdout_exp
 
