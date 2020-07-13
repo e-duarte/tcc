@@ -1,5 +1,6 @@
 params_exp = {
     'models': ['alexnet', 'resnet'],
+    'dataset': 'cifar10',
     'optimizer': 'sgd',
     'opt_params': {'learning_rate':0.01, 'momentum':0.9, 'decay':0.1e-3},
     'loss': 'categorical_crossentropy',

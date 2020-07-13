@@ -5,12 +5,12 @@ from save_model import SaveModel
 from optimizers import Optimizers
 from parameters import params_exp
 from training_models import Trainner
-from tensorflow.keras.datasets import mnist
+from tensorflow.keras import datasets
 from validation import Holdout, KFoldCustom
 from models import Alexnet, Resnet34, DeepAutoencoder
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.callbacks import LearningRateScheduler, ReduceLROnPlateau
 from utils import preprocessing, expand_dims, vetorizar_data, to_categorical
+from tensorflow.keras.callbacks import LearningRateScheduler, ReduceLROnPlateau
 
 models_names = params_exp['models']
 optimizer = params_exp['optimizer']
@@ -28,8 +28,16 @@ dir_save = params_exp['dir_save']
 # cross = params_exp['cross']
 k = params_exp['k-fold']
 h = params_exp['holdout']
+dataset_name =  params_exp['dataset']
 
-(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+
+def get_dataset(name):
+    if 'mnist' == name:
+        return datasets.mnist.load_data()
+    elif 'cifar10' == name:
+        return datasets.cifar10.load_data()
+
+(train_images, train_labels), (test_images, test_labels) = get_dataset(dataset_name)
 
 def concat_dict(dicts):
     if not dicts:
@@ -50,7 +58,7 @@ def build_and_compile_model(model_name, initializers, size, params_compile):
     if model_name == 'alexnet':
         model = Alexnet(input_shape=size, initializers=initializers, name=model_name)
     elif model_name == 'resnet':
-        model = Resnet34(name=model_name)
+        model = Resnet34(input_shape=size, name=model_name)
     elif model_name == 'autoencoder':
         model = DeepAutoencoder(name=model_name)
 
@@ -65,9 +73,14 @@ def initialize_models():
         ('loss', loss),
         ('metrics', metrics)
     ])
+
+    dims = train_images.shape[1:] if 'mnist' != dataset_name else train_images.shape[1:] + (1,)
     
     for name in models_names:
-        models.append(build_and_compile_model(name, initializers, (28,28,1), params_compile))
+        models.append(build_and_compile_model(name, initializers,dims, params_compile))
+
+    for model in models:
+        model().summary()
     
     return models
 
@@ -125,6 +138,7 @@ def experiment():
     
     return kfold_exp, holdout_exp
 
+
 models = initialize_models()
 preprocessing_data()
 trainner = training()
@@ -141,7 +155,7 @@ for k in kfold:
     print('Saving models historys...')
     for j, history in enumerate(historys):
         for i, h in enumerate(history):
-            save.save_history_csv(h, models[j]().name + '_k'+ str(i+1))
+            save.save_history_csv(h,  dataset_name + '_' + models[j]().name + '_k'+ str(i+1))
 
 for i, exp  in enumerate(holdout):
     (scores, history) = exp
@@ -152,7 +166,7 @@ for i, exp  in enumerate(holdout):
 
     print('Saving models historys...')
     for j in range(len(models)):
-        save.save_history_csv(history[j], models[j]().name + '_split'+ str(h[i]))
+        save.save_history_csv(history[j], dataset_name + '_' + models[j]().name + '_split'+ str(h[i]))
 
 # model.summary()
 
@@ -160,13 +174,6 @@ for i, exp  in enumerate(holdout):
 #                     batch_size=params_exp['batch_size'],
 #                     data_augmentation=datagen,
 #                     callbacks=callbacks)
-
-
-
-# 
-
-
-
 
 # if not params_exp['load_weights']:
 #     history = trainner.train_model()
