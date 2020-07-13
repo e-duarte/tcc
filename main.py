@@ -152,7 +152,7 @@ for i, exp  in enumerate(holdout):
 
     print('Saving models historys...')
     for j in range(len(models)):
-        save.save_history_csv(history, models[j]().name + '_split'+ str(h[i]))
+        save.save_history_csv(history[j], models[j]().name + '_split'+ str(h[i]))
 
 # model.summary()
 
