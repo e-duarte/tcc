@@ -2,15 +2,18 @@ from tensorflow import keras
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.callbacks import TensorBoard
 import numpy as np
+import tensorflow as tf
 
 class Trainner():
     def __init__(self,
         epochs=10,
         batch_size=None,
         data_augmentation=None,
-        callbacks=[]):
-
+        callbacks=[],
+        resolver=None):
+        # self.strategy = strategy = tf.distribute.experimental.TPUStrategy(resolver)
         self.epochs=epochs
+        
 
         self.batch_size=batch_size
         self.data_augmantion=data_augmentation

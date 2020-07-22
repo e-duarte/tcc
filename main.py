@@ -1,3 +1,7 @@
+import tpu_config
+
+
+
 import numpy as np
 import pandas as pd
 from metrics import f1_score
@@ -62,6 +66,7 @@ def concat_dict(dicts):
     return dict_join
     
 def build_and_compile_model(model_name, initializers, size, params_compile):
+    
     model = None
     if model_name == 'alexnet':
         model = Alexnet(input_shape=size, initializers=initializers, name=model_name)
@@ -85,7 +90,8 @@ def initialize_models():
     dims = train_images.shape[1:] if 'mnist' != dataset_name else train_images.shape[1:] + (1,)
     
     for name in models_names:
-        models.append(build_and_compile_model(name, initializers,dims, params_compile))
+        with tpu_config.strategy.scope():
+            models.append(build_and_compile_model(name, initializers,dims, params_compile))
 
     for model in models:
         model().summary()
@@ -111,7 +117,7 @@ def training():
     if decay:
         callbacks.append(ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=50, min_lr=0.1e-3))
                                     
-    return Trainner(epochs=epochs,batch_size=batch, data_augmentation=datagen, callbacks=callbacks)
+    return Trainner(epochs=epochs,batch_size=batch, data_augmentation=datagen, callbacks=callbacks, resolver=tpu_config.resolver)
 
 def experiment():
     kfold_exp = []
