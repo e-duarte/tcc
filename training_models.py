@@ -21,7 +21,7 @@ class Trainner():
         # self.callbacks.append(checkpoint)
 
     def train_model(self, x, y, model, validation_data=None):
-        steps_per_epoch = int(len(x)/self.batch_size) if self.batch_size else None
+        # steps_per_epoch = int(len(x)/self.batch_size) if self.batch_size else None
     
         history = None
         if self.data_augmantion:
@@ -30,7 +30,8 @@ class Trainner():
                         callbacks=self.callbacks,
                         # use_multiprocessing=True,
                         validation_data=validation_data,
-                        steps_per_epoch=steps_per_epoch)
+                        # steps_per_epoch=steps_per_epoch
+                        )
         else:
             history = model.fit(x,
                         y,
@@ -39,6 +40,8 @@ class Trainner():
                         # callbacks=self.callbacks,
                         # use_multiprocessing=True,
                         batch_size=self.batch_size,
-                        steps_per_epoch=steps_per_epoch)
+                        validation_data=validation_data,
+                        # steps_per_epoch=steps_per_epoch
+                        )
         return history
 

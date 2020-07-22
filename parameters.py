@@ -13,9 +13,10 @@ params_exp = {
                 'FalsePositives', 
                 'TrueNegatives', 
                 'FalseNegatives',
-                'AUC'],
+                'AUC',
+                'f1_score'],
     'initializers': False,
-    'epochs': 2,
+    'epochs': 1,
     'batch_size': 256,
     'load_model': False,
     'data_augmentation':False,
@@ -23,6 +24,10 @@ params_exp = {
     'type':'conv',
     'dir_save': 'drive/My Drive/Colab Notebooks/results/experiment_convs/',
     # 'cross': True,
-    'k-fold': [10],
-    'holdout': [10, 20, 30],
+    'k-fold': [2],
+    'holdout': [],
 }
+
+# print(params_exp)
+# print(type(params_exp))
+# exit()
