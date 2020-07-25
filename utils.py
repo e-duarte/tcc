@@ -7,6 +7,7 @@ from tensorflow.keras.preprocessing.image import array_to_img, img_to_array
 import pandas as pd
 import seaborn as sn
 from datetime import datetime
+import os
 
 def preprocessing(train_images, test_images):
     return train_images.astype('float32')/255, test_images.astype('float32')/255
@@ -31,6 +32,14 @@ class PlotGraph:
         self.xlabels = xlabels
         self.ylabels = ylabels
         self.save = save
+
+        dir_path = ''
+        for p in path.split('/')[:-1]:
+            dir_path += p + '/'
+        
+        if not os.path.exists(dir_path):            
+            print('Making diretory...')
+            os.makedirs(path)
 
         if save:
             self.path =  path + '_' + self.get_date() + '.png'

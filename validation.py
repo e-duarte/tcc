@@ -4,6 +4,7 @@ from sklearn.metrics import confusion_matrix
 import numpy as np
 from utils import to_categorical
 from metrics import get_roc_curve
+from models import FactoryModel
 # from pandas_ml import ConfusionMatrix
 
 class Holdout:
@@ -64,14 +65,14 @@ class KFoldCustom:
             yield np.array(list(set(dataset) - set(idx))), idx
             i += 1
 
-    def execute(self, model, inputs, targets, shuffle = False):
+    def execute(self, inputs, targets, shuffle=False, config_model=None):
         if shuffle:
             inputs, targets = sh(inputs, targets, random_state=0)
         
-        print('\n------[executing {}-fold for {} model]------------------'.format(self.k, model().name))
+        print('\n------[executing {}-fold for {} model]------------------'.format(self.k, config_model['name']))
         scores_dict = {}
         scores_dict['scores'] = {}
-        scores_dict['scores']['model'] = [model().name]
+        scores_dict['scores']['model'] = [config_model['name']]
         fprs = []
         tprs = []
         aucs = []
@@ -82,12 +83,19 @@ class KFoldCustom:
         n_fold = 1
         for train, test in self.split(inputs):
             print('\n{}-fold'.format(n_fold))
+            model = FactoryModel(
+                config_model['name'],
+                config_model['name']+ '_k{}'.format(n_fold),
+                config_model['size'],
+                config_model['params']).get_model()
+            
             history = self.trainner.train_model(inputs[train],
                                         to_categorical(targets[train]), 
                                         model(),
                                         validation_data=(inputs[test], to_categorical(targets[test])))
 
             print('\nAvaluating model-------------------------------------------------------------')
+
             scores_model = model().evaluate(inputs[test], to_categorical(targets[test]))
 
             #roc curve and auc
@@ -111,7 +119,7 @@ class KFoldCustom:
             model.resetting_weight()
             n_fold += 1
         
-        scores = np.array(scores, dtype='int32')
+        scores = np.array(scores)
         for i, m in enumerate(model().metrics_names):
             scores_dict['scores'][m] = [scores[:,i].mean()]
 

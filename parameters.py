@@ -1,10 +1,11 @@
 import sys
 
 params_exp = {
-    'models': ['alexnet', 'resnet'],
+    'models': ['alexnet'],
     'dataset': sys.argv[1],
     'optimizer': 'sgd',
     'opt_params': {'learning_rate':0.01, 'momentum':0.9, 'decay':0.1e-3},
+    # 'opt_params': {},
     'loss': 'categorical_crossentropy',
     'metrics': ['categorical_accuracy',
                 'Precision',
@@ -16,16 +17,16 @@ params_exp = {
                 'AUC',
                 'f1_score'],
     'initializers': False,
-    'epochs': 400,
+    'epochs': 1,
     'batch_size': 256,
     'load_model': False,
     'data_augmentation':False,
     'decay_rate': True,
     'type':'conv',
-    'dir_save': 'drive/My Drive/Colab Notebooks/results/experiment_convs/',
+    'dir_save': '/content/drive/My Drive/TCC/results/experiment_convs/',
     # 'cross': True,
-    'k-fold': [10],
-    'holdout': [10, 20, 30],
+    'k-fold': [2],
+    'holdout': [],
 }
 
 # print(params_exp)

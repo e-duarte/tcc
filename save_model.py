@@ -1,12 +1,17 @@
 import pandas as pd
 from datetime import datetime
 import matplotlib.pyplot as plt
+import os
 
 class SaveModel:
     def __init__(self,  model=None, dir_name='./'):
         self.dir_name = dir_name
         self.file_name = model.name if model else '' 
         self.model = model
+
+        if not os.path.exists(dir_name):
+            print('Creating Diretory...')
+            os.makedirs(dir_name)
     
     def get_date(self):
         now = datetime.now()
@@ -24,11 +29,19 @@ class SaveModel:
 
     def save_history_csv(self, history, name):
         path = self.dir_name + '{}/'.format(name.split('_')[1]) + name + '_' + self.get_date() + '.csv'
+                
+        if not os.path.exists(self.dir_name + '{}/'.format(name.split('_')[1])):
+            os.makedirs(self.dir_name + '{}/'.format(name.split('_')[1]))
+
         df = pd.DataFrame(history.history)
         with open(path, mode='w') as f:
             df.to_csv(f)
+
     def save_roc_curve(self, fpr, tpr, auc, name):
         path = self.dir_name + '{}/'.format(name.split('_')[1]) + name + '_' + self.get_date() + '.png'
+
+        if not os.path.exists(self.dir_name + '{}/'.format(name.split('_')[1])):
+            os.makedirs(path)
 
         plt.figure()
         lw = 2

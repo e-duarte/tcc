@@ -28,6 +28,22 @@ class BaseModel:
     def __call__(self):
         return self.model
 
+
+class FactoryModel:
+    def __init__(self, name, nick, size, params_compile):
+        self.model = None
+        if name == 'alexnet':
+            self.model = Alexnet(input_shape=size, initializers=False, name=nick)
+        elif name == 'resnet':
+            self.model = Resnet34(input_shape=size, name=nick)
+        elif name == 'autoencoder':
+            self.model = DeepAutoencoder(name=nick)
+
+        self.model.compile(params_compile)
+        
+    def get_model(self):
+        return self.model
+
 class Alexnet(BaseModel):
     def __init__(self, input_shape=(28,28,1), initializers=True, name='model'):
         initializer = None

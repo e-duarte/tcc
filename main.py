@@ -12,6 +12,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from utils import preprocessing, expand_dims, vetorizar_data, to_categorical, PlotGraph
 from tensorflow.keras.callbacks import LearningRateScheduler, ReduceLROnPlateau
 import json as Json
+import os
 
 models_names = params_exp['models']
 optimizer = params_exp['optimizer']
@@ -39,6 +40,7 @@ def get_dataset(name):
         return datasets.cifar10.load_data()
 
 (train_images, train_labels), (test_images, test_labels) = get_dataset(dataset_name)
+dims = None
 
 def get_classes_names():
     classes_names = [i for i in range(10)] if dataset_name == 'mnist' else ['airplane', 'automobile',
@@ -74,6 +76,7 @@ def build_and_compile_model(model_name, initializers, size, params_compile):
     return model
 
 def initialize_models():
+    global dims
     models = []
     metrics.append(f1_score)
     params_compile = dict([
@@ -83,7 +86,6 @@ def initialize_models():
     ])
 
     dims = train_images.shape[1:] if 'mnist' != dataset_name else train_images.shape[1:] + (1,)
-    
     for name in models_names:
         models.append(build_and_compile_model(name, initializers,dims, params_compile))
 
@@ -110,8 +112,22 @@ def training():
                                     horizontal_flip=True)
     if decay:
         callbacks.append(ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=50, min_lr=0.1e-3))
-                                    
-    return Trainner(epochs=epochs,batch_size=batch, data_augmentation=datagen, callbacks=callbacks)
+    
+    array_dir = dir_save.split('/')[1:]
+    dir_path = '/{}/{}/{}/{}/{}/'.format(
+        array_dir[0],
+        array_dir[1],
+        array_dir[2],
+        array_dir[3],
+        'weights'
+    )                                    
+    return Trainner(
+        epochs=epochs,
+        batch_size=batch, 
+        data_augmentation=datagen, 
+        callbacks=callbacks, 
+        dir_path=dir_path
+    )
 
 def experiment():
     kfold_exp = []
@@ -119,6 +135,13 @@ def experiment():
 
     inputs = np.concatenate((train_images, test_images), axis=0)
     targets = np.concatenate((train_labels, test_labels), axis=0)
+
+    params_compile = dict([
+        ('optimizer', Optimizers(optimizer, opt_params).optimizer()),
+        ('loss', loss),
+        ('metrics', metrics)
+    ])
+
 
     if len(k) != 0:
         print('\nApply K-fold==========================================================================')
@@ -132,7 +155,9 @@ def experiment():
             for model in models:
                 model.resetting_weight()
                 kfold = KFoldCustom(k=i, trainner=trainner)
-                dict_scores = kfold.execute(model, inputs, targets, shuffle=True)
+
+                
+                dict_scores = kfold.execute(inputs, targets, True, {'name':model().name, 'size':dims,'params':params_compile})
                 scores_models.append(dict_scores['scores'])
                 historys_models.append(dict_scores['history'])
                 roc_curve_models.append(dict_scores['roc'])
@@ -163,6 +188,9 @@ def experiment():
     return kfold_exp, holdout_exp
 
 def save_experiment():
+    if not os.path.exists(dir_save):
+        os.makedirs(dir_save)
+
     exp_json = Json.dumps(params_exp, indent=4)
     with open(dir_save + 'experiment.json', mode='w') as f:
         f.write(exp_json)
@@ -181,8 +209,12 @@ for exp_i, exp in enumerate(kfold):
     scores, historys, roc, cms = exp
     save = SaveModel(dir_name=dir_save)
 
+    models_str = ''
+    for model in models_names:
+        models_str += model +'_'
+
     print('Saving model scores kfold...')
-    save.save_results(scores, '{}_kfold10'.format(dataset_name))
+    save.save_results(scores, '{}_{}kfold10'.format(dataset_name, models_str))
 
     print('Saving models historys kfold...')
     for j, history in enumerate(historys):
@@ -214,8 +246,12 @@ for i, exp in enumerate(holdout):
     scores, history, roc, cms = exp
     save = SaveModel(dir_name=dir_save)
 
+    models_str = ''
+    for model in models_names:
+        models_str += model +'_'
+
     print('Saving model scores hold out...')
-    save.save_results(scores, 'holdout{}'.format(h[i]))
+    save.save_results(scores,'{}_{}holdout{}'.format(dataset_name, models_str, h[i]))
 
     print('Saving models historys hold out...')
     for j in range(len(models)):
