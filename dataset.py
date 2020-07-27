@@ -4,7 +4,7 @@ import numpy as np
 
 
 class DatasetFactory:
-    def __init__(self, name, flat=False, concat=False, expand=False, normalize=False, normalize=False):
+    def __init__(self, name, flat=False, concat=False, expand=False, normalize=False):
         if 'mnist' == name:
             (x_train, y_train), (x_test, y_test) = datasets.mnist.load_data()
         elif 'cifar10' == name:
