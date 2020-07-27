@@ -1,7 +1,7 @@
 import sys
 
 params_exp = {
-    'models': ['alexnet'],
+    'models': ['resnet'],
     'dataset': sys.argv[1],
     'optimizer': 'sgd',
     'opt_params': {'learning_rate':0.01, 'momentum':0.9, 'decay':0.1e-3},
@@ -17,7 +17,7 @@ params_exp = {
                 'AUC',
                 'f1_score'],
     'initializers': False,
-    'epochs': 1,
+    'epochs': 400,
     'batch_size': 256,
     'load_model': False,
     'data_augmentation':False,
@@ -25,8 +25,8 @@ params_exp = {
     'type':'conv',
     'dir_save': '/content/drive/My Drive/TCC/results/experiment_convs/',
     # 'cross': True,
-    'k-fold': [2],
-    'holdout': [],
+    'k-fold': [],
+    'holdout': [10, 20, 30],
 }
 
 # print(params_exp)

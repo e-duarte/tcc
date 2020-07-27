@@ -9,7 +9,7 @@ import seaborn as sn
 from datetime import datetime
 import os
 
-def preprocessing(train_images, test_images):
+def normalize(train_images, test_images):
     return train_images.astype('float32')/255, test_images.astype('float32')/255
 
 def expand_dims(train, test):

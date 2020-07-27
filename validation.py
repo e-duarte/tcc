@@ -17,7 +17,13 @@ class Holdout:
                 dict_scores[metric] = []
                 dict_scores[metric].append(scores[i])
 
-    def execute(self, model, inputs, targets):
+    def execute(self, inputs, targets, config_model=None):
+        model = FactoryModel(
+                config_model['name'],
+                config_model['name']+ '_split{}'.format(self.test_size),
+                config_model['size'],
+                config_model['params']).get_model()
+
         dict_scores = {}
         dict_scores['scores'] = {}
         dict_scores['scores']['model'] = [model().name]

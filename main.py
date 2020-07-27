@@ -176,7 +176,7 @@ def experiment():
             for model in models:
                 model.resetting_weight()
                 holdout = Holdout(test_size=i/100, trainner=trainner)
-                dict_scores = holdout.execute(model, inputs, targets)
+                dict_scores = holdout.execute(inputs, targets, {'name':model().name, 'size':dims,'params':params_compile})
 
                 scores_models.append(dict_scores['scores'])
                 historys_models.append(dict_scores['history'])
