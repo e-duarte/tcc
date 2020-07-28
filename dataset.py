@@ -17,7 +17,6 @@ class DatasetFactory:
             x_train, x_test = vetorizar_data(x_train, x_test)
         
         if expand:
-            print('sim')
             expand_dims(x_train, x_test)
 
         if concat:

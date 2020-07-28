@@ -7,6 +7,16 @@ from metrics import get_roc_curve
 from models import FactoryModel
 # from pandas_ml import ConfusionMatrix
 
+class ValidationFactory:
+    def __init__(self, name, trainner, x):
+        self.validator = None
+        if name == 'k-fold':
+            self.validator = KFoldCustom(k=x, trainner=trainner)
+        elif name == 'holdout':
+            self.validator = Holdout(test_size=x, trainner=trainner)
+    
+
+
 class Holdout:
     def __init__(self, test_size, trainner):
         self.trainner = trainner
@@ -22,13 +32,14 @@ class Holdout:
                 config_model['name'],
                 config_model['name']+ '_split{}'.format(self.test_size),
                 config_model['size'],
-                config_model['params']).get_model()
+                config_model['params'],
+                config_model['init']).get_model()
 
         dict_scores = {}
         dict_scores['scores'] = {}
         dict_scores['scores']['model'] = [model().name]
 
-        print('\n------[executing Hold out {} for {} model]------------------'.format(self.test_size, model.name))
+        print('\n------[executing Hold out {} for {} model]------------------'.format(self.test_size*100, model.name))
         train_x, test_x, train_y, test_y  = train_test_split(inputs,
                                                             targets, 
                                                             test_size=self.test_size,
@@ -47,7 +58,7 @@ class Holdout:
 
         (fpr, tpr, auc) = get_roc_curve(to_categorical(test_y), model().predict(test_x))
         dict_scores['roc'] = (fpr, tpr, auc)
-        dict_scores['history'] = history
+        dict_scores['history'] = [history]
         dict_scores['cm'] = confusion_matrix(test_y, np.argmax(model().predict(test_x), axis=1))
         # print(test_y, np.argmax(model().predict(test_x), axis=1))
         # dict_scores['cm'] = ConfusionMatrix(test_y, np.argmax(model().predict(test_x), axis=1))
@@ -71,7 +82,7 @@ class KFoldCustom:
             yield np.array(list(set(dataset) - set(idx))), idx
             i += 1
 
-    def execute(self, inputs, targets, shuffle=False, config_model=None):
+    def execute(self, inputs, targets, shuffle=True, config_model=None):
         if shuffle:
             inputs, targets = sh(inputs, targets, random_state=0)
         

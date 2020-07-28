@@ -32,23 +32,24 @@ class PlotGraph:
         self.xlabels = xlabels
         self.ylabels = ylabels
         self.save = save
+        self.path = path
 
-        dir_path = ''
-        for p in path.split('/')[:-1]:
-            dir_path += p + '/'
+        # dir_path = ''
+        # for p in path.split('/')[:-1]:
+        #     dir_path += p + '/'
         
-        if not os.path.exists(dir_path):            
+        if not os.path.exists(path):            
             print('Making diretory...')
             os.makedirs(path)
 
-        if save:
-            self.path =  path + '_' + self.get_date() + '.png'
+        # if save:
+        #     self.path =  path + '_' + self.get_date() + '.png'
     
     def get_date(self):
         now = datetime.now()
         return '{}_{}_{}'.format(now.day, now.month, now.year)
 
-    def plot_cm(self, cm):
+    def plot_cm(self, cm, name):
         sn.set()
         cm = pd.DataFrame(cm, index=self.xlabels, columns=self.ylabels)
         _, ax = plt.subplots(figsize=(14, 11))
@@ -56,10 +57,10 @@ class PlotGraph:
 
         if self.save:
             figure = graph.get_figure()
-            figure.savefig(self.path)
+            figure.savefig(self.path + name)
 
 
-    def plot_roc(self, fpr, tpr, auc):
+    def plot_roc(self, fpr, tpr, auc, name):
         # path = self.dir_name + '{}/'.format(name.split('_')[1]) + name + '_' + self.get_date() + '.png'
         plt.figure()
         lw = 2
@@ -73,7 +74,7 @@ class PlotGraph:
         plt.title('Receiver operating characteristic example')
         plt.legend(loc="lower right")
         if self.save:
-            plt.savefig(self.path, format='png')
+            plt.savefig(self.path + name, format='png')
         
 # def redimensionar(train, test):
 #     # train = array_to_img(train[1])

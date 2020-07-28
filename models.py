@@ -30,10 +30,10 @@ class BaseModel:
 
 
 class FactoryModel:
-    def __init__(self, name, nick, size, params_compile):
+    def __init__(self, name, nick, size, params_compile, initializers=False):
         self.model = None
         if name == 'alexnet':
-            self.model = Alexnet(input_shape=size, initializers=False, name=nick)
+            self.model = Alexnet(input_shape=size, initializers=initializers, name=nick)
         elif name == 'resnet':
             self.model = Resnet34(input_shape=size, name=nick)
         elif name == 'autoencoder':

@@ -1,0 +1,37 @@
+{
+    "models": [
+        "alexnet",
+        "resnet"
+    ],
+    "dataset": "mnist",
+    "optimizer": "sgd",
+    "opt_params": {
+        "learning_rate": 0.01,
+        "momentum": 0.9,
+        "decay": 0.0001
+    },
+    "loss": "categorical_crossentropy",
+    "metrics": [
+        "categorical_accuracy",
+        "Precision",
+        "Recall",
+        "TruePositives",
+        "FalsePositives",
+        "TrueNegatives",
+        "FalseNegatives",
+        "AUC",
+        "f1_score"
+    ],
+    "initializers": false,
+    "epochs": 1,
+    "batch": 256,
+    "load_model": false,
+    "data_augmentation": false,
+    "decay": true,
+    "type": "conv",
+    "dir": "/content/drive/My Drive/TCC/",
+    "exp":{
+        "k-fold": [2],
+        "holdout": [10, 20, 30]
+    }
+}
