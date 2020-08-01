@@ -39,6 +39,7 @@ class Experiment:
                 dataset_name=experiment['dataset'],
                 type_exp=experiment['type'],
                 load=experiment['load_state'],
+                epochs_total=experiment['epochs'],
                 state_url=experiment['state_url'].format(experiment['dataset'] + '_' + model_name + '_' + experiment_name)
             )
 
@@ -178,15 +179,16 @@ class Experiment:
         )
 
 class ExperimentState:
-    def __init__(self, dataset=[], k=None, h=None, experiment_url=None, load=False, state_url=None, dataset_name=None, type_exp=None):
+    def __init__(self, dataset=[], k=None, h=None, experiment_url=None, load=False, state_url=None, dataset_name=None, type_exp=None, epochs_total=None):
         if not load:
             self.dataset = dataset
             self.dataset_name = dataset_name
             self.experiment_url = experiment_url
             self.epochs = 0
-            self.history_k = [[] for i in range(k[0])]
+            range_k = k[0] if k != [] else 0
+            self.history_k = [[] for i in range(range_k)]
             self.history_h = []
-            self.weights_k = [[] for i in range(k[0])]
+            self.weights_k = [[] for i in range(range_k)]
             self.weights_h = []
             self.k = [1 for i in range(len(k))]
             self.h = h
@@ -194,6 +196,7 @@ class ExperimentState:
             self.exp_k = k
             self.load = load
             self.exp = ''
+            self.epochs_total = epochs_total
             self.type_exp = type_exp
         else:
             state = self.load_json(state_url)
@@ -211,6 +214,7 @@ class ExperimentState:
             self.exp_k = state['exp_k']
             self.load = state['load']
             self.exp = state['exp']
+            self.epochs_total = state['epochs_total']
             self.type_exp = state['type']
     
     def load_json(self, url):
@@ -334,6 +338,7 @@ class ExperimentState:
             'exp_k' : self.exp_k,
             'load': self.load,
             'exp': self.exp,
+            'epochs_total': self.epochs_total,
             'type': self.type_exp
         }
         return state

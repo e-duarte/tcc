@@ -23,10 +23,10 @@ class CheckpointState(keras.callbacks.Callback):
                                                             epoch+1)
         path = self.filepath + 'weights/' + name_weights
 
-        print('\nsaving Temp History...\n')
         history_path = ''.join(random.choice(string.ascii_letters + string.digits) for i in range(10))
 
         history = self.model.history.history
+        print('\nsaving Temp History...\n')
         if epoch+1 != 1:
             if self.state.exp.split('_')[0] == 'k-fold':
                 self.state.update_history_k(self.state.last_k() - 1, self.filepath + 'state/tmp/' + history_path + '.csv')
@@ -56,7 +56,7 @@ class CheckpointState(keras.callbacks.Callback):
             save_history.save_history_csv(df_history.to_dict(), name_history)
                 
 
-        if ((epoch+1) % 2) == 0:
+        if ((epoch+1) % 100) == 0:
             print('\nsaving...{} - epochs:{}'.format(self.model.name, epoch+1))
             print(path, '\n')
             # print(self.model.history.history)
@@ -84,8 +84,6 @@ class CheckpointState(keras.callbacks.Callback):
         return merged
         
 
-
-          
 class Trainner:
     def __init__(self,
         epochs=10,

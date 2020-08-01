@@ -132,6 +132,7 @@ class KFoldCustom:
             self.state.update_k(0)
             self.state.epochs = 0
             self.state.load = False
+            self.trainner.epochs = self.state.epochs_total
             self.state.save_state()
             n_fold += 1
 

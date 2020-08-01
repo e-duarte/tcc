@@ -41,7 +41,7 @@ class FactoryModel:
         elif name == 'test':
             self.model = ModelTest(name=nick)
             
-        self.model().summary()
+        # self.model().summary()
         self.model.compile(params_compile)
         
     def get_model(self):
