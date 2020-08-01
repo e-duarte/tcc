@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.regularizers import l2
-from tensorflow.keras import Model, Input
+from tensorflow.keras import Model, Input, Sequential
 from tensorflow.keras.layers import Conv2D,  Dense, Flatten, Dropout, Activation, BatchNormalization
 from tensorflow.keras.layers import MaxPooling2D,  AveragePooling2D
 
@@ -38,7 +38,10 @@ class FactoryModel:
             self.model = Resnet34(input_shape=size, name=nick)
         elif name == 'autoencoder':
             self.model = DeepAutoencoder(name=nick)
-
+        elif name == 'test':
+            self.model = ModelTest(name=nick)
+            
+        self.model().summary()
         self.model.compile(params_compile)
         
     def get_model(self):
@@ -357,3 +360,12 @@ class DeepAutoencoder(BaseModel):
     
     def __call__(self):
         return (self.model, self.encoder())
+
+class ModelTest(BaseModel):
+    def __init__(self, name):
+        self.model = Sequential([
+            Flatten(input_shape=(28,28,1)),
+            Dense(10, activation='softmax')
+        ], name=name)
+
+        

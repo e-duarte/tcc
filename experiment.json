@@ -1,7 +1,6 @@
 {
     "models": [
-        "alexnet",
-        "resnet"
+        "test"
     ],
     "dataset": "mnist",
     "optimizer": "sgd",
@@ -23,15 +22,16 @@
         "f1_score"
     ],
     "initializers": false,
-    "epochs": 1,
+    "epochs": 4,
     "batch": 256,
-    "load_model": false,
+    "load_state": false,
     "data_augmentation": false,
     "decay": true,
     "type": "conv",
-    "dir": "/content/drive/My Drive/TCC/",
+    "dir": "./resultados/",
     "exp":{
         "k-fold": [2],
-        "holdout": [10, 20, 30]
-    }
+        "holdout": [10]
+    },
+    "state_url": "./resultados/state/state_{}.json"
 }

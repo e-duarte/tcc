@@ -33,7 +33,7 @@ class SaveExperiment:
         if not os.path.exists(path.split(name + '.csv')[0]):
             os.makedirs(self.root_dir + '{}/'.format(name.split('_')[1]))
 
-        df = pd.DataFrame(history.history)
+        df = pd.DataFrame(history)
         with open(path, mode='w') as f:
             df.to_csv(f)
     
@@ -45,3 +45,10 @@ class SaveExperiment:
         exp_json = json.dumps(experiment, indent=4)
         with open(path, mode='w') as f:
             f.write(exp_json)
+    
+    def save_weights(self, model, name):
+        path = self.root_dir + name
+        if not os.path.exists(self.root_dir):
+            os.makedirs(self.root_dir)
+        
+        model.save_weights(path)
