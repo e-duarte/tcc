@@ -1,16 +1,15 @@
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle as sh
 from sklearn.metrics import confusion_matrix
-import numpy as np
 from utils import to_categorical
 from metrics import get_roc_curve
 from models import FactoryModel
-# from pandas_ml import ConfusionMatrix
+import numpy as np
 
 class ValidationFactory:
     def __init__(self, name, trainner, x, state=None):
         self.validator = None
-        if name == 'k-fold':
+        if name == 'kfold':
             self.validator = KFoldCustom(k=x, trainner=trainner, state=state)
         elif name == 'holdout':
             self.validator = Holdout(test_size=x, trainner=trainner, state=state)
@@ -19,25 +18,27 @@ class Holdout:
     def __init__(self, test_size, trainner, state=None):
         self.trainner = trainner
         self.test_size = test_size
-        self.state = state
-        self.state.exp = '{}_{}'.format('holdout', test_size)
+        self.state = state.get_state_validation(valid_name='holdout', h=test_size*100)
 
     def add_score(self, metrics, dict_scores, scores):
         for i, metric in enumerate(metrics):
                 dict_scores[metric] = []
                 dict_scores[metric].append(scores[i])
 
-    def execute(self, inputs, targets, config_model=None):
+    def execute(self, inputs, targets, config_model=None, dataset_name=''):
         model = FactoryModel(
                 config_model['name'],
-                config_model['name']+ '_split{}'.format(self.test_size),
+                '{}_{}_holdout-{}'.format(dataset_name, config_model['name'], self.test_size),
                 config_model['size'],
                 config_model['params'],
                 config_model['init']).get_model()
-        
-        if self.state.load:
-            if self.state.get_weights_h() != []:
-                model().load_weights(self.state.get_weights_h())
+
+        if self.state.epochs > 0:
+            model().load_weights(self.state.weights)
+        else:
+            #initialize weight and history path for the model
+            self.state.weights += model().name + '.h5'
+            self.state.history += '{}/history_{}.csv'.format(config_model['name'], model().name)
 
         dict_scores = {}
         dict_scores['scores'] = {}
@@ -49,10 +50,12 @@ class Holdout:
                                                             test_size=self.test_size,
                                                             random_state=0, 
                                                             shuffle=False)
-        # train_y = to_categorical(train_y)
-        # test_y = to_categorical(test_y)
-
-        history = self.trainner.train_model(train_x, to_categorical(train_y), model(), validation_data=(test_x,to_categorical(test_y)))
+        history = self.trainner.train_model(train_x,
+                                            to_categorical(train_y),
+                                            model(),
+                                            validation_data=(test_x,to_categorical(test_y)),
+                                            init_epoch=self.state.epochs
+                                            )
 
         print('Avaluating model-------------------------------------------------------------')
         scores = model().evaluate(test_x, to_categorical(test_y))
@@ -64,15 +67,12 @@ class Holdout:
         dict_scores['roc'] = (fpr, tpr, auc)
         dict_scores['history'] = [history]
         dict_scores['cm'] = confusion_matrix(test_y, np.argmax(model().predict(test_x), axis=1))
-        # print(test_y, np.argmax(model().predict(test_x), axis=1))
-        # dict_scores['cm'] = ConfusionMatrix(test_y, np.argmax(model().predict(test_x), axis=1))
+
 
         print("Result for the {} model".format(model().name))
         print(dict_scores['scores'])
 
-        self.state.update_h()
-        self.state.load = False
-        self.state.save_state()
+        self.state.status = True
         
         return dict_scores
 
@@ -80,24 +80,18 @@ class KFoldCustom:
     def __init__(self, k, trainner, state=None):
         self.k = k
         self.trainner = trainner
-        self.state = state
-        # self.state_i = 1 if not state.load else state.last_k()
-        self.state_i = state.last_k()
-        print()
-        print(state.last_k())
-        print()
-        self.state.exp = '{}_{}'.format('k-fold', k)
+        self.state = state.get_state_validation(valid_name='kfold', k=k)
+        self.state_i = self.state.current_k
     
     def split(self, X):
         n = X.shape[0]
-        # self.state_i = 1
         dataset = np.arange(0, n, dtype=int)
         while self.state_i <= self.k:
             idx = np.arange(n * (self.state_i - 1) / self.k, n * self.state_i / self.k, dtype=int)
             yield np.array(list(set(dataset) - set(idx))), idx
             self.state_i += 1
 
-    def execute(self, inputs, targets, config_model=None):
+    def execute(self, inputs, targets, config_model=None, dataset_name=''):
         
         print('\n------[executing {}-fold for {} model]------------------'.format(self.k, config_model['name']))
         scores_dict = {}
@@ -107,34 +101,35 @@ class KFoldCustom:
         tprs = []
         aucs = []
         scores = []
-        # historys = []
         cms = []
 
+        #training
         n_fold = self.state_i
         for train, test in self.split(inputs):
             print('\n{}-fold'.format(n_fold))
             model = FactoryModel(
                 config_model['name'],
-                config_model['name']+ '_k{}'.format(n_fold),
+                '{}_{}_kfold-{}_{}'.format(dataset_name, config_model['name'], self.k, n_fold),
                 config_model['size'],
                 config_model['params']).get_model()
             
-            if self.state.load:
-                model().load_weights(self.state.get_weights_k(self.state_i - 1))
-            print()
-            print('epochs of training :{}'.format(self.trainner.epochs))
-            print()
-            self.trainner.train_model(inputs[train],
-                                        to_categorical(targets[train]), 
-                                        model(),
-                                        validation_data=(inputs[test], to_categorical(targets[test])))
+            
+            if self.state.get_epochs(self.state_i - 1) > 0:
+                model().load_weights(self.state.get_weights(self.state_i - 1))
+            else:
+                #initialize weight and history path for the model i
+                self.state.weights[self.state_i - 1] += model().name + '.h5'
+                self.state.historys[self.state_i - 1] += '{}/history_{}.csv'.format(config_model['name'], model().name)
 
-            self.state.update_k(0)
-            self.state.epochs = 0
-            self.state.load = False
-            self.trainner.epochs = self.state.epochs_total
-            self.state.save_state()
+
+            self.trainner.train_model(inputs[train],
+                                    to_categorical(targets[train]), 
+                                    model(),
+                                    validation_data=(inputs[test], to_categorical(targets[test])),
+                                    init_epoch=self.state.get_epochs(self.state_i - 1),
+                                    )
             n_fold += 1
+            self.state.current_k = n_fold
 
         self.state_i = 1
         n_fold = self.state_i
@@ -146,8 +141,7 @@ class KFoldCustom:
                 config_model['size'],
                 config_model['params']).get_model()
 
-            if self.state.get_weights_k(self.state_i - 1) != []:
-                model().load_weights(self.state.get_weights_k(self.state_i - 1))
+            model().load_weights(self.state.get_weights(self.state_i-1))
 
             scores_model = model().evaluate(inputs[test], to_categorical(targets[test]))
 
@@ -169,8 +163,6 @@ class KFoldCustom:
             # historys.append(history)
             scores.append(scores_model)
             n_fold += 1
-
-        self.state.reset_weighs_heights_k()
 
         scores = np.array(scores)
         for i, m in enumerate(model().metrics_names):
@@ -195,6 +187,8 @@ class KFoldCustom:
         
         print("Result for the {} model".format(model().name))
         print(scores_dict['scores'])
+
+        self.state.statu = True
 
         return scores_dict
 

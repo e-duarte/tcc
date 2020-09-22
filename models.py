@@ -28,7 +28,6 @@ class BaseModel:
     def __call__(self):
         return self.model
 
-
 class FactoryModel:
     def __init__(self, name, nick, size, params_compile, initializers=False):
         self.model = None
@@ -365,7 +364,27 @@ class ModelTest(BaseModel):
     def __init__(self, name):
         self.model = Sequential([
             Flatten(input_shape=(28,28,1)),
-            Dense(10, activation='softmax')
+            Dense(10, activation='softmax', bias_initializer='ones')
         ], name=name)
 
         
+
+
+if __name__ == '__main__':
+    from tensorflow.keras.datasets import mnist
+    from tensorflow.keras.callbacks import CSVLogger
+    import json
+    import pandas as pd
+    import gzip, os
+
+    (x, y), (_, _) = mnist.load_data()
+
+    model = ModelTest('testeModel')()
+
+    model.compile(
+        optimizer='adam',
+        loss='sparse_categorical_crossentropy',
+        metrics=['accuracy']
+    )
+    model.fit(x, y, epochs=10, callbacks=[CSVLogger('history.csv')])
+    os.system('scp -P 16280 ./history.csv ewerton@0.tcp.ngrok.io:/home/ewerton')

@@ -1,8 +1,14 @@
 {
     "models": [
-        "alexnet"
+        "test"
     ],
     "dataset": "mnist",
+    "processing": {
+        "flat": false,
+        "concat": true,
+        "expand": false,
+        "normalize": false
+    },
     "optimizer": "sgd",
     "opt_params": {
         "learning_rate": 0.01,
@@ -14,23 +20,16 @@
         "categorical_accuracy",
         "Precision",
         "Recall",
-        "TruePositives",
-        "FalsePositives",
-        "TrueNegatives",
-        "FalseNegatives",
         "AUC",
         "f1_score"
     ],
     "initializers": false,
-    "epochs": 400,
+    "epochs": 20,
     "batch": 256,
-    "load_state": false,
     "data_augmentation": false,
     "decay": true,
-    "type": "conv",
-    "dir": "/content/drive/My Drive/TCC/",
+    "dir": "./experimento_testes/",
     "exp":{
-        "k-fold": [10]
-    },
-    "state_url": "/content/drive/My Drive/TCC/state/state_{}.json"
+        "holdout": [10, 20, 30]
+    }
 }
