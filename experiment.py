@@ -51,11 +51,8 @@ class Experiment:
             ('metrics', metrics)
         ])
 
-        
         #Config training
         callbacks = []
-        history_tmp = './'
-        callbacks.append(WeightsCheckpoint(self.experiment['dir'], self.state))
 
         history_metrics.insert(0, 'loss')
         history_metrics.append('f1_score')
@@ -67,10 +64,12 @@ class Experiment:
 
         callbacks.append(HistoryCheckpoint(
             self.experiment['dir'],
-            history_tmp,
             self.state,
             history_metrics))
-        # callbacks.append(CSVLogger('tmp_history.csv', append=True))
+            
+        callbacks.append(WeightsCheckpoint(self.experiment['dir'], self.state))
+
+        
         
         if experiment['decay']:
             callbacks.append(ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=50, min_lr=0.1e-3))

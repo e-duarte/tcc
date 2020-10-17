@@ -68,7 +68,6 @@ class Holdout:
         dict_scores['history'] = [history]
         dict_scores['cm'] = confusion_matrix(test_y, np.argmax(model().predict(test_x), axis=1))
 
-
         print("Result for the {} model".format(model().name))
         print(dict_scores['scores'])
 

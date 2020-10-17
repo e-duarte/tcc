@@ -3,7 +3,7 @@ from tensorflow.keras.callbacks import CSVLogger
 from save import SaveExperiment
 from tensorflow import keras
 import pandas as pd
-import os, time
+import os
 
 class WeightsCheckpoint(keras.callbacks.Callback):
     def __init__(self, url, state):
@@ -20,7 +20,7 @@ class WeightsCheckpoint(keras.callbacks.Callback):
 
         state_validation = self.state.get_state_validation(valid_name=valid_name, k=valid_k, h=valid_h)
 
-        if ((epoch + 1) % 4) == 0:
+        if ((epoch + 1) % 100) == 0:
             print('\nSAVING MODEL WEIGHTS...')
 
             if valid_name == 'holdout':
@@ -33,9 +33,8 @@ class WeightsCheckpoint(keras.callbacks.Callback):
             
 
 class HistoryCheckpoint(keras.callbacks.Callback):
-    def __init__(self, url, path_tmp, state, metrics):
+    def __init__(self, url, state, metrics):
         self.state = state
-        self.path_tmp = path_tmp
         self.url = url + 'results/{}/'
         self.history = {m:[] for m in metrics}
 
@@ -58,8 +57,8 @@ class HistoryCheckpoint(keras.callbacks.Callback):
 
         state_validation = self.state.get_state_validation(valid_name=valid_name, k=valid_k, h=valid_h)
 
-        if ((epoch + 1) % 4) == 0:
-            print('\nSAVING HISTORY...')
+        if ((epoch + 1) % 100) == 0:
+            print('\n\nSAVING HISTORY...')
 
             tmp_history = pd.DataFrame(self.history)
             path_history = ''
@@ -71,6 +70,7 @@ class HistoryCheckpoint(keras.callbacks.Callback):
 
             history = pd.DataFrame(columns=tmp_history.columns)
 
+            print(path_history)
             if os.path.exists(path_history):
                 history = pd.read_csv(path_history, index_col=[0])
             

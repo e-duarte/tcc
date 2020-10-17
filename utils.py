@@ -2,7 +2,6 @@ import numpy as np
 from tensorflow.keras import utils
 from tensorflow.keras.datasets import mnist
 import matplotlib.pyplot as plt
-# from PIL import Image
 from tensorflow.keras.preprocessing.image import array_to_img, img_to_array
 import pandas as pd
 import seaborn as sn
@@ -57,7 +56,7 @@ class PlotGraph:
 
         if self.save:
             figure = graph.get_figure()
-            figure.savefig(self.path + name)
+            figure.savefig(self.path + name, dpi=300)
 
 
     def plot_roc(self, fpr, tpr, auc, name):
@@ -65,16 +64,16 @@ class PlotGraph:
         plt.figure()
         lw = 2
         plt.plot(fpr, tpr, color='darkorange',
-                lw=lw, label='ROC curve (area = %0.2f)' % auc)
+                lw=lw, label='ROC curve (area = %0.4f)' % auc)
         plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('True Positive Rate')
-        plt.title('Receiver operating characteristic example')
+        plt.xlabel('Taxa de falso positivo')
+        plt.ylabel('Taxa de verdadeiro positivo')
+        plt.title('Curva ROC')
         plt.legend(loc="lower right")
         if self.save:
-            plt.savefig(self.path + name, format='png')
+            plt.savefig(self.path + name, format='png', dpi=300)
         
 # def redimensionar(train, test):
 #     # train = array_to_img(train[1])

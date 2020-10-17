@@ -1,6 +1,6 @@
 {
     "models": [
-        "test"
+        "alexnet"
     ],
     "dataset": "mnist",
     "processing": {
@@ -24,12 +24,12 @@
         "f1_score"
     ],
     "initializers": false,
-    "epochs": 20,
+    "epochs": 400,
     "batch": 256,
     "data_augmentation": false,
     "decay": true,
-    "dir": "./experimento_testes/",
+    "dir": "/content/drive/My Drive/TCC/",
     "exp":{
-        "holdout": [10, 20, 30]
+        "holdout": [10]
     }
 }
